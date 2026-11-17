@@ -47,12 +47,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             AppManager.default.hasAlreadyAnsweredAccessibility = true
         }
         
-        if AppManager.default.lastRunVersion != self.getBundleVersion() {
-            AppManager.default.lastRunVersion = self.getBundleVersion()
-            let rnctrl = ReleaseNotesWindowController.instantiate()
-            rnctrl.window?.orderFrontRegardless()
-        }
-        
         UserNotificationHelper.askUserAtLaunch()
         
         self.loadMainMenu()
@@ -67,10 +61,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         nib?.instantiate(withOwner: self.statusMenuController, topLevelObjects: nil)
         
         NSApp.hide(self)
-    }
-    
-    private func getBundleVersion() -> String {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
     }
     
     func windowWillClose(_ notification: Notification) {
