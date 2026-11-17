@@ -81,10 +81,16 @@ class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuCont
     
     // MARK: - Private functions
     
-    /// Setup the status bar's item
+    /// Register the menu bar item and let macOS 27 manage visibility through System Settings.
     private func setupStatusMenu() {
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        
+        self.statusItem.autosaveName = "Fluor4me"
+        if #available(macOS 27, *) {
+            // Clear any item-level hide saved by an older build. The system still applies its per-app switch.
+            self.statusItem.isVisible = true
+        } else {
+            self.statusItem.behavior = .removalAllowed
+        }
         self.statusItem.menu = statusMenu
         adaptStatusMenuIcon()
     }

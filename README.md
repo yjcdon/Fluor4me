@@ -9,6 +9,9 @@ F4 opens Spotlight. In standard function-key mode, use Fn+F4.
 
 ## Install
 
+The release ZIP supports Apple Silicon Macs on macOS 11 or later. To install
+with Homebrew, run `brew install --cask yjcdon/fluor4me/fluor4me`.
+
 1. Download the Apple Silicon ZIP from the [latest release](https://github.com/yjcdon/Fluor4me/releases/latest), unzip it, and move Fluor4me to Applications.
 2. Quit any older Fluor instance and launch Fluor4me. Grant it Accessibility access in System Settings, then switch apps.
 3. Select text on a regular Chrome web page and press F4.
@@ -19,6 +22,16 @@ text fields. Chrome may omit paragraph separators in selections across blocks.
 
 Fluor removes its mapping when disabled or normally quit. If Fluor was
 force-quit with Chrome in front, relaunch Fluor to clear the leftover mapping.
+
+Command-drag the Fluor4me icon out of the menu bar to hide it. F4 search stays
+active while the icon is hidden. On macOS 27, turn Fluor4me back on in
+System Settings → Menu Bar → Allow in the Menu Bar to bring the icon back
+while Fluor4me is running.
+
+When upgrading from 2.5.1, Fluor4me copies existing keyboard rules and preferences.
+Grant the new app Accessibility access. If System Settings still lists
+`com.yjcdon.Fluor4me` under Menu Bar, use the **Fluor4me** switch for the new app.
+
 After updating a locally signed build, remove and re-add the app in
 Accessibility settings if macOS rejects the previous authorization.
 

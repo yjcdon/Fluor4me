@@ -30,14 +30,15 @@
 import Cocoa
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate {
     let statusMenuController: StatusMenuController = .init()
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         #if RELEASE
             PFMoveToApplicationsFolderIfNecessary()
         #endif
-        
+
+        migratePreferences()
         ValueTransformer.setValueTransformer(RuleValueTransformer(), forName: NSValueTransformerName("RuleValueTransformer"))
         
         // Check accessibility
@@ -56,15 +57,29 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         self.statusMenuController.behaviorController?.performTerminationCleaning()
     }
 
+    /// Import preferences once after the menu bar registration changes bundle identifiers.
+    private func migratePreferences() {
+        let defaults = UserDefaults.standard
+        let migrationKey = "MigratedFluor4mePreferences"
+        guard let identifier = Bundle.main.bundleIdentifier,
+              identifier == "io.github.yjcdon.Fluor4me",
+              !defaults.bool(forKey: migrationKey) else { return }
+
+        var current = defaults.persistentDomain(forName: identifier) ?? [:]
+        let previous = defaults.persistentDomain(forName: "com.yjcdon.Fluor4me") ?? [:]
+        for (key, value) in previous where current[key] == nil &&
+            !key.hasPrefix("NSStatusItem ") && key != "HasAlreadyRefusedAccessibility" {
+            current[key] = value
+        }
+        current[migrationKey] = true
+        defaults.setPersistentDomain(current, forName: identifier)
+    }
+
     private func loadMainMenu() {
         let nib = NSNib(nibNamed: "MainMenu", bundle: nil)
         nib?.instantiate(withOwner: self.statusMenuController, topLevelObjects: nil)
         
         NSApp.hide(self)
-    }
-    
-    func windowWillClose(_ notification: Notification) {
-        self.loadMainMenu()
     }
 }
 
