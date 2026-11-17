@@ -58,6 +58,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         self.loadMainMenu()
     }
     
+    func applicationWillTerminate(_ notification: Notification) {
+        self.statusMenuController.behaviorController?.performTerminationCleaning()
+    }
+
     private func loadMainMenu() {
         let nib = NSNib(nibNamed: "MainMenu", bundle: nil)
         nib?.instantiate(withOwner: self.statusMenuController, topLevelObjects: nil)

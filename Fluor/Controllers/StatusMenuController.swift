@@ -213,7 +213,6 @@ class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuCont
     @IBAction func quitApplication(_ sender: AnyObject) {
         self.stopObservingUsesLightIcon()
         NSWorkspace.shared.notificationCenter.removeObserver(self)
-        self.behaviorController.performTerminationCleaning()
         NSApp.terminate(self)
     }
 }

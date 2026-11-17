@@ -50,6 +50,7 @@
 		3FCD16A51D79793600C57B22 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCD16A41D79793600C57B22 /* AppDelegate.swift */; };
 		3FCD16A71D79793600C57B22 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FCD16A61D79793600C57B22 /* Assets.xcassets */; };
 		3FCD16AA1D79793600C57B22 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3FCD16A81D79793600C57B22 /* MainMenu.xib */; };
+		D46C24C62EBB610D004D5791 /* ChromeF4Shortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = D46C24C72EBB610D004D5791 /* ChromeF4Shortcut.swift */; };
 		3FD0AFA623C62CD400DC9533 /* FKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD0AFA523C62CD400DC9533 /* FKeyManager.swift */; };
 		3FD0AFA823C8759A00DC9533 /* AppErrorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD0AFA723C8759A00DC9533 /* AppErrorManager.swift */; };
 		3FE213291D89A6940023FAC2 /* NotificationHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE213281D89A6940023FAC2 /* NotificationHelpers.swift */; };
@@ -135,6 +136,7 @@
 		3FCD16A61D79793600C57B22 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3FCD16A91D79793600C57B22 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		3FCD16AB1D79793600C57B22 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D46C24C72EBB610D004D5791 /* ChromeF4Shortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChromeF4Shortcut.swift; sourceTree = "<group>"; };
 		3FD0AFA523C62CD400DC9533 /* FKeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FKeyManager.swift; sourceTree = "<group>"; };
 		3FD0AFA723C8759A00DC9533 /* AppErrorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppErrorManager.swift; sourceTree = "<group>"; };
 		3FE213281D89A6940023FAC2 /* NotificationHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationHelpers.swift; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 		3F4C5CB02019441D006CC84A /* Misc */ = {
 			isa = PBXGroup;
 			children = (
+				D46C24C72EBB610D004D5791 /* ChromeF4Shortcut.swift */,
 				3FD0AFA523C62CD400DC9533 /* FKeyManager.swift */,
 				3F2571F31FDBD43500020194 /* TableViewContentAnimator.swift */,
 				3FCD16A41D79793600C57B22 /* AppDelegate.swift */,
@@ -482,6 +485,7 @@
 				3F2FA4011D79D66D003E2AD8 /* DefaultModeViewController.swift in Sources */,
 				3F8F93BD1EEAF1EB00FCE91F /* RuleValueTransformer.swift in Sources */,
 				3F5F57582016249E002AF4C1 /* RunningAppWindowController.swift in Sources */,
+				D46C24C62EBB610D004D5791 /* ChromeF4Shortcut.swift in Sources */,
 				3FD0AFA623C62CD400DC9533 /* FKeyManager.swift in Sources */,
 				3FE38EA8221D90930019B889 /* ReleaseNotesWindowController.swift in Sources */,
 				3F8F93BB1EEAC9B900FCE91F /* RuleCellView.swift in Sources */,

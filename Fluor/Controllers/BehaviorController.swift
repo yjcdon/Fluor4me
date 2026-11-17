@@ -42,6 +42,9 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
     private var fnDownTimestamp: TimeInterval? = nil
     private var shouldHandleFNKey: Bool = false
     
+    private let chromeF4Shortcut = ChromeF4Shortcut()
+    private var sessionIsActive = true
+    private var appliedKeyboardMode: FKeyMode = .media
     private var currentMode: FKeyMode = .media
     private var onLaunchKeyboardMode: FKeyMode = .media
     private var currentAppID: String = ""
@@ -51,8 +54,10 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
     private var switchMethod: SwitchMethod = .window
     
     func setupController() {
+        self.chromeF4Shortcut.recoverIfNeeded()
         self.onLaunchKeyboardMode = AppManager.default.getCurrentFKeyMode()
         self.currentMode = self.onLaunchKeyboardMode
+        self.appliedKeyboardMode = self.onLaunchKeyboardMode
         self.switchMethod = AppManager.default.switchMethod
         
         self.applyAsObserver()
@@ -62,23 +67,26 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(appMustWake(notification:)), name: NSWorkspace.sessionDidBecomeActiveNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(appMustWake(notification:)), name: NSWorkspace.didWakeNotification, object: nil)
         
-        guard !AppManager.default.isDisabled else { return }
-        if let currentApp = NSWorkspace.shared.frontmostApplication, let id = currentApp.bundleIdentifier ?? currentApp.executableURL?.lastPathComponent {
-            self.adaptModeForApp(withId: id)
-//            self.updateAppBehaviorViewFor(app: currentApp, id: id)
+        if let app = NSWorkspace.shared.frontmostApplication {
+            self.updateActiveApplication(app)
         }
     }
-    
+
     func setApplicationIsEnabled(_ enabled: Bool) {
         if enabled {
             self.adaptModeForApp(withId: self.currentAppID)
         } else {
-            do { try FKeyManager.setCurrentFKeyMode(self.onLaunchKeyboardMode) }
+            self.chromeF4Shortcut.deactivate()
+            do {
+                try FKeyManager.setCurrentFKeyMode(self.onLaunchKeyboardMode)
+                self.appliedKeyboardMode = self.onLaunchKeyboardMode
+            }
             catch { AppErrorManager.terminateApp(withReason: error.localizedDescription) }
         }
     }
     
     func performTerminationCleaning() {
+        self.chromeF4Shortcut.deactivate()
         if AppManager.default.shouldRestoreStateOnQuit {
             let state: FKeyMode
             if AppManager.default.shouldRestorePreviousState {
@@ -106,8 +114,12 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
     
     func activeApplicationDidChangw(notification: Notification) {
         self.adaptToAccessibilityTrust()
-        guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
-            let id = app.bundleIdentifier ?? app.executableURL?.lastPathComponent else { return }
+        guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else { return }
+        self.updateActiveApplication(app)
+    }
+
+    private func updateActiveApplication(_ app: NSRunningApplication) {
+        guard let id = app.bundleIdentifier ?? app.executableURL?.lastPathComponent else { return }
         self.currentAppName = app.localizedName
         self.currentAppID = id
         self.currentAppURL = app.bundleURL
@@ -163,8 +175,15 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
     ///
     /// - Parameter notification: The notification.
     @objc private func appMustSleep(notification: Notification) {
-        do { try FKeyManager.setCurrentFKeyMode(self.onLaunchKeyboardMode) }
-        catch { os_log("Unable to reset FKey mode to pre-launch mode", type: .error) }
+        guard self.sessionIsActive else { return }
+        self.sessionIsActive = false
+        self.chromeF4Shortcut.deactivate()
+        do {
+            try FKeyManager.setCurrentFKeyMode(self.onLaunchKeyboardMode)
+            self.appliedKeyboardMode = self.onLaunchKeyboardMode
+        } catch {
+            os_log("Unable to reset FKey mode to pre-launch mode", type: .error)
+        }
         self.resignAsObserver()
     }
     
@@ -173,8 +192,12 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
     ///
     /// - Parameter notification: The notification.
     @objc private func appMustWake(notification: Notification) {
-        self.changeKeyboard(mode: currentMode)
+        guard !self.sessionIsActive else { return }
+        self.sessionIsActive = true
         self.applyAsObserver()
+        if let app = NSWorkspace.shared.frontmostApplication {
+            self.updateActiveApplication(app)
+        }
     }
     
     /// Register self as an observer for some notifications.
@@ -199,18 +222,29 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
     ///
     /// - parameter id: The app's bundle id.
     private func adaptModeForApp(withId id: String) {
-        guard self.switchMethod != .key else { return }
-        let behavior = AppManager.default.behaviorForApp(id: id)
-        let mode = AppManager.default.keyboardStateFor(behavior: behavior)
-        guard mode != self.currentMode else { return }
-        self.currentMode = mode
-        self.changeKeyboard(mode: mode)
-}
-    
-    private func changeKeyboard(mode: FKeyMode) {
-        do { try FKeyManager.setCurrentFKeyMode(mode) }
-        catch { AppErrorManager.terminateApp(withReason: error.localizedDescription) }
-        
+        if self.switchMethod != .key {
+            let behavior = AppManager.default.behaviorForApp(id: id)
+            self.currentMode = AppManager.default.keyboardStateFor(behavior: behavior)
+        }
+        self.changeKeyboard(mode: self.currentMode)
+    }
+
+    /// Use Apple media keys in Chrome while its single-key Spotlight mapping is active.
+    private func changeKeyboard(mode requestedMode: FKeyMode) {
+        guard self.sessionIsActive, !AppManager.default.isDisabled else { return }
+        let isChrome = NSWorkspace.shared.frontmostApplication?.bundleIdentifier == ChromeF4Shortcut.chromeID
+        if !isChrome { self.chromeF4Shortcut.deactivate() }
+        let mode: FKeyMode = isChrome ? .media : requestedMode
+        if mode != self.appliedKeyboardMode {
+            do { try FKeyManager.setCurrentFKeyMode(mode) }
+            catch { AppErrorManager.terminateApp(withReason: error.localizedDescription) }
+            self.appliedKeyboardMode = mode
+            self.showKeyboardMode(mode)
+        }
+        if isChrome { self.chromeF4Shortcut.activate() }
+    }
+
+    private func showKeyboardMode(_ mode: FKeyMode) {
         switch mode {
         case .media:
             os_log("Switch to Apple Mode for %@", self.currentAppID)
