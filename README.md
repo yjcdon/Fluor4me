@@ -1,5 +1,34 @@
+# Fluor4me
 
-# This README is out-of-date 
+On the built-in Apple keyboard, press F4 in Google Chrome to search the selected
+text in a new Google tab. The command does nothing when the selection is empty.
+Chrome uses Apple media-key mode, so F1/F2 still adjust brightness and
+F10/F11/F12 still control sound. When you leave Chrome, Fluor removes the F4
+mapping and applies your usual rules for the next app. In Apple media-key mode,
+F4 opens Spotlight. In standard function-key mode, use Fn+F4.
+
+## Install
+
+1. Download the Apple Silicon ZIP from the [latest release](https://github.com/yjcdon/Fluor4me/releases/latest), unzip it, and move Fluor4me to Applications.
+2. Quit any older Fluor instance and launch Fluor4me. Grant it Accessibility access in System Settings, then switch apps.
+3. Select text on a regular Chrome web page and press F4.
+
+The release ZIP uses an ad-hoc signature. Fluor reads the focused Chrome web
+page's selection through macOS Accessibility and skips browser UI and secure
+text fields. Chrome may omit paragraph separators in selections across blocks.
+
+Fluor removes its mapping when disabled or normally quit. If Fluor was
+force-quit with Chrome in front, relaunch Fluor to clear the leftover mapping.
+After updating a locally signed build, remove and re-add the app in
+Accessibility settings if macOS rejects the previous authorization.
+
+## Build from source
+
+Put [Sparkle 1.27.3](https://github.com/sparkle-project/Sparkle/releases/tag/1.27.3)'s
+`Sparkle.framework` in the `Fluor` source directory, open `Fluor.xcodeproj` in
+Xcode, select your signing identity, and build the Fluor scheme.
+
+# Upstream Fluor documentation
 
 [![Swift](https://img.shields.io/badge/Swift-4.0-orange.svg?style=flat)](https://developer.apple.com/swift/)
 ![version](https://img.shields.io/badge/macOS-10.11+-green.svg?style=flat)
