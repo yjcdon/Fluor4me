@@ -9,8 +9,7 @@ F4 opens Spotlight. In standard function-key mode, use Fn+F4.
 
 ## Install
 
-The release ZIP supports Apple Silicon Macs on macOS 11 or later. To install
-with Homebrew, run `brew install --cask yjcdon/fluor4me/fluor4me`.
+The release ZIP supports Apple Silicon Macs on macOS 11 or later.
 
 1. Download the Apple Silicon ZIP from the [latest release](https://github.com/yjcdon/Fluor4me/releases/latest), unzip it, and move Fluor4me to Applications.
 2. Quit any older Fluor instance and launch Fluor4me. Grant it Accessibility access in System Settings, then switch apps.
