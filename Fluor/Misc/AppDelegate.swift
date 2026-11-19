@@ -39,8 +39,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let delegate = AppDelegate()
         app.delegate = delegate
         app.setActivationPolicy(.accessory)
+        app.mainMenu = makeMainMenu()
         app.run()
         withExtendedLifetime(delegate) {}
+    }
+
+    /// Route Command-W through AppKit to the front window, including for a menu bar app.
+    private static func makeMainMenu() -> NSMenu {
+        let mainMenu = NSMenu()
+        let fileMenu = NSMenu()
+        let fileItem = NSMenuItem()
+        fileItem.submenu = fileMenu
+        mainMenu.addItem(fileItem)
+        fileMenu.addItem(
+            withTitle: NSLocalizedString("Close Window", comment: ""),
+            action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w"
+        )
+        return mainMenu
     }
     
     func applicationDidFinishLaunching(_ notification: Notification) {
