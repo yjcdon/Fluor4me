@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import plistlib
+import re
 import shutil
 import subprocess
 import tempfile
@@ -89,10 +90,18 @@ function run(argv) {
 """, path)
 
 
+def local_signing_identity():
+    """Use the Mac's development identity to keep the app recognizable across local builds."""
+    result = subprocess.run(["security", "find-identity", "-v", "-p", "codesigning"],
+                            capture_output=True, text=True, check=True)
+    identities = re.findall(r'^\s*\d+\) ([0-9A-Fa-f]{40}) "Apple Development:', result.stdout, re.MULTILINE)
+    return identities[0] if len(identities) == 1 else "-"
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "dist" / "Fluor4me.app")
-    parser.add_argument("--sign", default="-", help="codesign identity (default: ad hoc)")
+    parser.add_argument("--sign", help="codesign identity (default: local Apple Development identity if unique, otherwise ad hoc)")
     parser.add_argument("--debug", action="store_true")
     args = parser.parse_args()
     output = args.output.absolute()
@@ -103,7 +112,7 @@ def main():
     output.parent.mkdir(parents=True, exist_ok=True)
     scratch = Path(tempfile.mkdtemp(prefix=".fluor-build-", dir=output.parent))
     try:
-        build(output, args.sign, args.debug, scratch)
+        build(output, args.sign or local_signing_identity(), args.debug, scratch)
     finally:
         trash(scratch)
     print(output)

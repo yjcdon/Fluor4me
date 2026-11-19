@@ -100,7 +100,9 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
         statusMenu.addItem(makeItem("About Fluor4me", #selector(showAbout(_:)), icon: .about))
         statusMenu.addItem(makeItem("Quit", #selector(quitApplication(_:)), key: "q", icon: .quit))
 
-        self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        self.statusItem.button?.image = FluorIcon.mediaKeys.image(size: 15)
+        self.statusItem.button?.toolTip = "Fluor4me"
         self.statusItem.autosaveName = "Fluor4me"
         if #available(macOS 27, *) {
             // Clear any item-level hide saved by an older build. The system still applies its per-app switch.
