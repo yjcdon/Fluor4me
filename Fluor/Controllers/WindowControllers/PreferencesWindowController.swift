@@ -27,15 +27,19 @@
 //
 
 
-import Cocoa
+import AppKit
 
-final class PreferencesWindowController: NSWindowController, StoryboardInstantiable {
-    static var storyboardName: NSStoryboard.Name = .preferences
-    
-    override func windowDidLoad() {
-        super.windowDidLoad()
-        
-        let toolbar = window?.toolbar
-        toolbar?.insertItem(withItemIdentifier: .flexibleSpace, at: (toolbar?.items.count ?? 0) - 1)
+final class PreferencesWindowController: NSWindowController {
+    /// Create the settings window and restore its last position.
+    static func instantiate() -> PreferencesWindowController {
+        let window = NSWindow(contentViewController: PreferencesTabViewController())
+        window.title = NSLocalizedString("Preferences", comment: "")
+        window.styleMask = [.titled, .closable]
+        window.toolbarStyle = .preference
+        window.isReleasedWhenClosed = false
+        window.setContentSize(NSSize(width: 520, height: 224))
+        window.center()
+        window.setFrameAutosaveName("Fluor_NewPreferencesWindowAutosaveName")
+        return PreferencesWindowController(window: window)
     }
 }
