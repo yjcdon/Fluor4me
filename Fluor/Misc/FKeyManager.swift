@@ -34,7 +34,7 @@ import IOKit.hidsystem
 enum FKeyManager {
     typealias FKeyManagerResult = Result<FKeyMode, Error>
     
-    enum FKeyManagerError: Error {
+    enum FKeyManagerError: LocalizedError {
         case cannotCreateMasterPort
         case cannotOpenService
         case cannotSetParameter
@@ -42,18 +42,18 @@ enum FKeyManager {
         
         case otherError
         
-        var localizedDescription: String {
+        var errorDescription: String? {
             switch self {
             case .cannotCreateMasterPort:
-                return "Master port creation failed (E1)"
+                return NSLocalizedString("Master port creation failed (E1)", comment: "Function key error")
             case .cannotOpenService:
-                return "Service opening failed (E2)"
+                return NSLocalizedString("Service opening failed (E2)", comment: "Function key error")
             case .cannotSetParameter:
-                return "Parameter set not possible (E3)"
+                return NSLocalizedString("Parameter set not possible (E3)", comment: "Function key error")
             case .cannotGetParameter:
-                return "Parameter read not possible (E4)"
-            default:
-                return "Unknown error (E99)"
+                return NSLocalizedString("Parameter read not possible (E4)", comment: "Function key error")
+            case .otherError:
+                return NSLocalizedString("Unknown error (E99)", comment: "Function key error")
             }
         }
     }
