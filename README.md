@@ -1,15 +1,19 @@
 # Fluor4me
 
+Use the menu bar to set each app to standard F1–F12, media keys, or the
+default mode. Fluor4me applies the rule when you switch apps.
+
 On the built-in Apple keyboard, press F4 in Google Chrome to search the selected
 text in a new Google tab. The command does nothing when the selection is empty.
 Chrome uses Apple media-key mode, so F1/F2 still adjust brightness and
 F10/F11/F12 still control sound. When you leave Chrome, Fluor removes the F4
 mapping and applies your usual rules for the next app. In Apple media-key mode,
-F4 opens Spotlight. In standard function-key mode, use Fn+F4.
+F4 opens Spotlight outside Chrome. In standard function-key mode, use Fn+F4.
 
 ## Install
 
-The release ZIP supports Apple Silicon Macs on macOS 11 or later.
+Starting with version 2.6.0, the release ZIP supports Apple Silicon Macs on
+macOS 14 or later.
 
 1. Download the Apple Silicon ZIP from the [latest release](https://github.com/yjcdon/Fluor4me/releases/latest), unzip it, and move Fluor4me to Applications.
 2. Quit any older Fluor instance and launch Fluor4me. Grant it Accessibility access in System Settings, then switch apps.
