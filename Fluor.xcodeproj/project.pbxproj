@@ -54,7 +54,6 @@
 		3FE7E0E31D7CBE1700DC754D /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE7E0E11D7CBE1700DC754D /* AboutWindowController.swift */; };
 		3FE7E0EA1D7CC01B00DC754D /* RulesEditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE7E0E81D7CC01B00DC754D /* RulesEditorWindowController.swift */; };
 		3FF2410B1EDB4E0000E524CD /* SwitchMethodViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF2410A1EDB4E0000E524CD /* SwitchMethodViewController.swift */; };
-		3FF655CA20751D1600C8D2FC /* PFMoveApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF655C820751D1600C8D2FC /* PFMoveApplication.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -120,8 +119,6 @@
 		3FE7E0E11D7CBE1700DC754D /* AboutWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
 		3FE7E0E81D7CC01B00DC754D /* RulesEditorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RulesEditorWindowController.swift; sourceTree = "<group>"; };
 		3FF2410A1EDB4E0000E524CD /* SwitchMethodViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwitchMethodViewController.swift; sourceTree = "<group>"; };
-		3FF655C820751D1600C8D2FC /* PFMoveApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFMoveApplication.m; sourceTree = "<group>"; };
-		3FF655C920751D1600C8D2FC /* PFMoveApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFMoveApplication.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -207,8 +204,6 @@
 				3FD0AFA523C62CD400DC9533 /* FKeyManager.swift */,
 				3F2571F31FDBD43500020194 /* TableViewContentAnimator.swift */,
 				3FCD16A41D79793600C57B22 /* AppDelegate.swift */,
-				3FF655C920751D1600C8D2FC /* PFMoveApplication.h */,
-				3FF655C820751D1600C8D2FC /* PFMoveApplication.m */,
 				3FD0AFA723C8759A00DC9533 /* AppErrorManager.swift */,
 			);
 			path = Misc;
@@ -430,7 +425,6 @@
 				3FE7E0E31D7CBE1700DC754D /* AboutWindowController.swift in Sources */,
 				3F15629C23FE892A00CD0773 /* MoverImageView.swift in Sources */,
 				3FE7E0E01D7CA14600DC754D /* LaunchAtLoginController.m in Sources */,
-				3FF655CA20751D1600C8D2FC /* PFMoveApplication.m in Sources */,
 				3F8879931FBF5F2A005C28E6 /* PreferencesTabViewController.swift in Sources */,
 				3F2FA4051D7A1F87003E2AD8 /* AppManager.swift in Sources */,
 				3F6D52CE20696E2100517E57 /* PoppingLinkButton.swift in Sources */,
@@ -674,7 +668,6 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MARKETING_VERSION = 2.5.2;
-				OTHER_SWIFT_FLAGS = "-DRELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.yjcdon.Fluor4me;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

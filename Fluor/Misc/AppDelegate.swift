@@ -34,10 +34,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let statusMenuController: StatusMenuController = .init()
     
     func applicationDidFinishLaunching(_ notification: Notification) {
-        #if RELEASE
-            PFMoveToApplicationsFolderIfNecessary()
-        #endif
-
         migratePreferences()
         ValueTransformer.setValueTransformer(RuleValueTransformer(), forName: NSValueTransformerName("RuleValueTransformer"))
         
