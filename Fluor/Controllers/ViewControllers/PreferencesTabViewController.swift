@@ -36,7 +36,18 @@ final class PreferencesTabViewController: NSTabViewController, TriggerSectionVis
     private var languageUpdates: [() -> Void] = []
     private lazy var restoreStartup = checkbox("Restore startup mode", checked: preferences.shouldRestorePreviousState,
                                                action: #selector(changeRestoreStartup(_:)))
-    private lazy var quitMode = modeControl(preferences.onQuitState, action: #selector(changeQuitMode(_:)))
+    private lazy var quitModeRow: NSStackView = {
+        let label = NSTextField(labelWithString: "")
+        let mode = modeControl(preferences.onQuitState, action: #selector(changeQuitMode(_:)))
+        localize {
+            label.stringValue = AppLanguage.text("Mode after quitting")
+            mode.setAccessibilityLabel(label.stringValue)
+        }
+        let row = NSStackView(views: [label, mode])
+        row.orientation = .horizontal
+        row.alignment = .centerY
+        return row
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -84,10 +95,8 @@ final class PreferencesTabViewController: NSTabViewController, TriggerSectionVis
 
         let resetOnQuit = checkbox("Reset mode on quit", checked: preferences.shouldRestoreStateOnQuit,
                                    action: #selector(changeResetOnQuit(_:)))
-        let quitMode = self.quitMode
-        localize { quitMode.setAccessibilityLabel(AppLanguage.text("Reset mode on quit")) }
         updateQuitControls()
-        return pane([languageRow(), startAtLogin, startupRow, resetOnQuit, restoreStartup, quitMode])
+        return pane([languageRow(), startAtLogin, startupRow, resetOnQuit, restoreStartup, quitModeRow])
     }
 
     private func languageRow() -> NSView {
@@ -184,10 +193,10 @@ final class PreferencesTabViewController: NSTabViewController, TriggerSectionVis
         return controller
     }
 
-    /// Enable the quit mode only when a specific mode will be restored.
+    /// Show the fixed mode only when it will apply on quit.
     private func updateQuitControls() {
         restoreStartup.isEnabled = preferences.shouldRestoreStateOnQuit
-        quitMode.isEnabled = preferences.shouldRestoreStateOnQuit && !preferences.shouldRestorePreviousState
+        quitModeRow.isHidden = !preferences.shouldRestoreStateOnQuit || preferences.shouldRestorePreviousState
     }
 
     /// Select whether quitting restores a keyboard mode.
