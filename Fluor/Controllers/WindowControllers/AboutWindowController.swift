@@ -27,8 +27,18 @@
 //
 
 
-import Cocoa
+import AppKit
 
-final class AboutWindowController: NSWindowController, StoryboardInstantiable {
-    static var storyboardName: NSStoryboard.Name = .about
+final class AboutWindowController: NSWindowController {
+    /// Create the About window and restore its last position.
+    static func instantiate() -> AboutWindowController {
+        let window = NSWindow(contentViewController: AboutViewController())
+        window.title = NSLocalizedString("About Fluor4me", comment: "")
+        window.styleMask = [.titled, .closable]
+        window.isReleasedWhenClosed = false
+        window.setContentSize(NSSize(width: 300, height: 258))
+        window.center()
+        window.setFrameAutosaveName("Fluor_AboutWindowAutosaveName")
+        return AboutWindowController(window: window)
+    }
 }

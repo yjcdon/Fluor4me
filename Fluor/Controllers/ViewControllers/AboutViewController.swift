@@ -27,31 +27,47 @@
 //
 
 
-import Cocoa
+import AppKit
 
-class AboutViewController: NSViewController {
-    @IBOutlet weak var versionLabel: NSTextField!
+final class AboutViewController: NSViewController {
+    override func loadView() {
+        let name = NSTextField(labelWithString: "Fluor4me")
+        name.font = .systemFont(ofSize: 24, weight: .semibold)
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
+        let build = Bundle.main.object(forInfoDictionaryKey: kCFBundleVersionKey as String) as? String ?? ""
+        let format = NSLocalizedString("Version %@ build %@", comment: "Application version and build number in About.")
+        let versionLabel = NSTextField(labelWithString: String(format: format, version, build))
+        let credit = NSTextField(labelWithString: NSLocalizedString("Copyright (c) 2016 Pierre Tacchi", comment: ""))
+        credit.textColor = .secondaryLabelColor
+        let github = NSButton(title: NSLocalizedString("Fluor4me on GitHub", comment: ""), target: self, action: #selector(goToGithub(_:)))
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        let bundleVersion = getBundleVersion()
-        let title = NSLocalizedString("Version %@ build %@", comment: "Application version and build number in About.")
-        versionLabel.stringValue = String(format: title, bundleVersion.version, bundleVersion.build)
+        let icon = NSImageView(image: NSApp.applicationIconImage ?? NSImage())
+        icon.imageScaling = .scaleProportionallyUpOrDown
+        icon.widthAnchor.constraint(equalToConstant: 96).isActive = true
+        icon.heightAnchor.constraint(equalToConstant: 96).isActive = true
+
+        let stack = NSStackView(views: [icon, name, versionLabel, credit, github])
+        stack.orientation = .vertical
+        stack.alignment = .centerX
+        stack.spacing = 8
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        let view = NSView()
+        view.addSubview(stack)
+        NSLayoutConstraint.activate([
+            stack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stack.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            stack.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
+            stack.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20)
+        ])
+        self.view = view
     }
-    
-    private func getBundleVersion() -> (version: String, build: String) {
-        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
-        let build = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as! String
-        
-        return (version, build)
+
+    override func cancelOperation(_ sender: Any?) {
+        view.window?.performClose(sender)
     }
-    
-    @IBAction func closeWindow(_ sender: Any) {
-        view.window?.close()
-    }
-    
-    @IBAction func goToGithub(_ sender: Any) {
+
+    /// Open the project's GitHub page from the About window.
+    @objc private func goToGithub(_ sender: Any) {
         guard let address = Bundle.main.object(forInfoDictionaryKey: "FLGithubURL") as? String,
               let url = URL(string: address) else { return }
         NSWorkspace.shared.open(url)
