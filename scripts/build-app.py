@@ -44,6 +44,8 @@ def build(output, identity, debug, scratch):
     info = plistlib.loads((FLUOR / "Info.plist").read_bytes())
     (contents / "Info.plist").write_bytes(plistlib.dumps(info))
     copy_app_icon(resources, scratch)
+    for icon in (FLUOR / "MenuBarIcons").glob("*.png"):
+        shutil.copyfile(icon, resources / icon.name)
     for translations in sorted(FLUOR.glob("*.lproj/Localizable.strings")):
         destination = resources / translations.parent.name
         destination.mkdir()

@@ -101,7 +101,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
         statusMenu.addItem(makeItem("Quit", #selector(quitApplication(_:)), key: "q", icon: .quit))
 
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-        self.statusItem.button?.image = FluorIcon.mediaKeys.image(size: 15)
+        self.statusItem.button?.image = MenuBarIcon.media.image
         self.statusItem.button?.toolTip = "Fluor4me"
         self.statusItem.autosaveName = "Fluor4me"
         if #available(macOS 27, *) {
