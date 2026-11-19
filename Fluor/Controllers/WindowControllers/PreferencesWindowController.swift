@@ -33,7 +33,7 @@ final class PreferencesWindowController: NSWindowController {
     /// Create the settings window and restore its last position.
     static func instantiate() -> PreferencesWindowController {
         let window = NSWindow(contentViewController: PreferencesTabViewController())
-        window.title = NSLocalizedString("Settings", comment: "")
+        window.title = AppLanguage.text("Settings")
         window.styleMask = [.titled, .closable, .miniaturizable]
         window.toolbarStyle = .preference
         window.isReleasedWhenClosed = false
@@ -41,5 +41,10 @@ final class PreferencesWindowController: NSWindowController {
         window.center()
         window.setFrameAutosaveName("Fluor_NewPreferencesWindowAutosaveName")
         return PreferencesWindowController(window: window)
+    }
+
+    func refreshLanguage() {
+        window?.title = AppLanguage.text("Settings")
+        (window?.contentViewController as? PreferencesTabViewController)?.refreshLanguage()
     }
 }

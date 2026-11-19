@@ -36,12 +36,17 @@ final class RulesEditorWindowController: NSWindowController {
             contentRect: NSRect(x: 0, y: 0, width: 360, height: 480),
             styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false
         )
-        window.title = NSLocalizedString("Rules", comment: "")
+        window.title = AppLanguage.text("Rules")
         window.contentViewController = RulesEditorViewController()
         window.contentMinSize = NSSize(width: 340, height: 240)
         window.isReleasedWhenClosed = false
         window.center()
         window.setFrameAutosaveName("Fluor_EditRulesWindowAutosaveName")
         return RulesEditorWindowController(window: window)
+    }
+
+    func refreshLanguage() {
+        window?.title = AppLanguage.text("Rules")
+        (window?.contentViewController as? RulesEditorViewController)?.refreshLanguage()
     }
 }

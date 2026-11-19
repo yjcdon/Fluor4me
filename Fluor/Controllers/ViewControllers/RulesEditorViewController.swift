@@ -33,19 +33,12 @@ import UniformTypeIdentifiers
 final class RulesEditorViewController: NSViewController, NSTableViewDelegate, BehaviorDidChangeObserver {
     private let itemsArrayController = NSArrayController(content: [])
     private var tableContentAnimator: TableViewContentAnimator<Rule>?
+    private lazy var addButton = NSButton(image: FluorIcon.add.image() ?? NSImage(),
+                                         target: self, action: #selector(addRule))
+    private lazy var removeButton = NSButton(image: FluorIcon.remove.image() ?? NSImage(),
+                                            target: self, action: #selector(removeRule))
 
     override func loadView() {
-        let addTitle = NSLocalizedString("Add rule", comment: "")
-        let removeTitle = NSLocalizedString("Delete selected rule", comment: "")
-        let addButton = NSButton(image: FluorIcon.add.image(description: addTitle) ?? NSImage(),
-                                 target: self, action: #selector(addRule))
-        let removeButton = NSButton(image: FluorIcon.remove.image(description: removeTitle) ?? NSImage(),
-                                    target: self, action: #selector(removeRule))
-        addButton.toolTip = addTitle
-        addButton.setAccessibilityLabel(addTitle)
-        removeButton.toolTip = removeTitle
-        removeButton.setAccessibilityLabel(removeTitle)
-
         let list = ApplicationListView(controls: [addButton, removeButton])
         view = list
         list.searchField.target = self
@@ -53,17 +46,26 @@ final class RulesEditorViewController: NSViewController, NSTableViewDelegate, Be
         list.tableView.delegate = self
         list.tableView.bind(.selectionIndexes, to: itemsArrayController, withKeyPath: "selectionIndexes")
         removeButton.bind(.enabled, to: itemsArrayController, withKeyPath: "canRemove")
-        list.countLabel.bind(NSBindingName("displayPatternValue1"), to: itemsArrayController,
-                             withKeyPath: "arrangedObjects.@count", options: [
-            .displayPattern: NSLocalizedString("%{value1}@ rules", comment: "")
-        ])
 
         itemsArrayController.sortDescriptors = [
             NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.caseInsensitiveCompare(_:)))
         ]
         itemsArrayController.content = Array(AppManager.default.rules)
         tableContentAnimator = TableViewContentAnimator(tableView: list.tableView, arrayController: itemsArrayController)
+        refreshLanguage()
         startObservingBehaviorDidChange()
+    }
+
+    /// Translate the rule editor's controls without rerunning its search.
+    func refreshLanguage() {
+        guard isViewLoaded, let list = view as? ApplicationListView else { return }
+        for (button, key) in [(addButton, "Add rule"), (removeButton, "Delete selected rule")] {
+            let title = AppLanguage.text(key)
+            button.toolTip = title
+            button.setAccessibilityLabel(title)
+            button.image?.accessibilityDescription = title
+        }
+        list.refreshLanguage(countFormat: "%{value1}@ rules", items: itemsArrayController)
     }
 
     deinit {

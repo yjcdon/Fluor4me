@@ -73,9 +73,10 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate {
         statusMenu.autoenablesItems = false
         for (index, title) in ["Switch method", "", "Default mode", "", "Current application", ""].enumerated() {
             let item = title.isEmpty ? NSMenuItem.separator() : NSMenuItem(
-                title: NSLocalizedString(title, comment: "Menu section"),
+                title: AppLanguage.text(title),
                 action: nil, keyEquivalent: ""
             )
+            if !title.isEmpty { item.representedObject = title }
             item.tag = index + 1
             statusMenu.addItem(item)
         }
@@ -102,10 +103,26 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate {
 
     /// Use system icons and command shortcuts for native menu actions.
     private func makeItem(_ title: String, _ action: Selector, key: String = "", icon: FluorIcon? = nil) -> NSMenuItem {
-        let item = NSMenuItem(title: NSLocalizedString(title, comment: "Menu item"), action: action, keyEquivalent: key)
+        let item = NSMenuItem(title: AppLanguage.text(title), action: action, keyEquivalent: key)
+        item.representedObject = title
         item.target = self
         item.image = icon?.image()
         return item
+    }
+
+    /// Translate existing menu items and open windows without touching the keyboard controller.
+    func refreshLanguage() {
+        for item in statusMenu.items {
+            if let key = item.representedObject as? String { item.title = AppLanguage.text(key) }
+        }
+        menuItemsController.refreshLanguage()
+        if let image = statusItem.button?.image, let name = image.name(), let icon = MenuBarIcon(rawValue: name) {
+            image.accessibilityDescription = icon.accessibilityDescription
+        }
+
+        preferencesController?.refreshLanguage()
+        rulesController?.refreshLanguage()
+        runningAppsController?.refreshLanguage()
     }
 
     func menuWillOpen(_ menu: NSMenu) {

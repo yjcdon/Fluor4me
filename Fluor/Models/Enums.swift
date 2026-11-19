@@ -51,9 +51,9 @@ import Foundation
     var label: String {
         switch self {
         case .media:
-            return NSLocalizedString("Media keys", comment: "")
+            return AppLanguage.text("Media keys")
         case .function:
-            return NSLocalizedString("Function keys", comment: "")
+            return AppLanguage.text("Function keys")
         }
     }
 }
@@ -77,11 +77,11 @@ import Foundation
     var label: String {
         switch self {
         case .inferred:
-            return NSLocalizedString("Same as default", comment: "")
+            return AppLanguage.text("Same as default")
         case .media:
-            return NSLocalizedString("Media keys", comment: "")
+            return AppLanguage.text("Media keys")
         case .function:
-            return NSLocalizedString("Function keys", comment: "")
+            return AppLanguage.text("Function keys")
         }
     }
 }

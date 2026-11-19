@@ -39,6 +39,7 @@ final class CurrentAppViewController: NSViewController, BehaviorDidChangeObserve
     
     private var currentAppID: String = ""
     private var currentAppURL: URL?
+    private var currentAppName: String?
     
     deinit {
         self.stopObservingBehaviorDidChange()
@@ -62,12 +63,7 @@ final class CurrentAppViewController: NSViewController, BehaviorDidChangeObserve
         behaviorSegment.segmentCount = 3
         behaviorSegment.target = self
         behaviorSegment.action = #selector(behaviorChanged(_:))
-        behaviorSegment.setAccessibilityLabel(NSLocalizedString("Current application", comment: "Menu row"))
-        for behavior in [AppBehavior.inferred, .media, .function] {
-            behaviorSegment.setImage(behavior.icon.image(description: behavior.label), forSegment: behavior.rawValue)
-            behaviorSegment.setWidth(32, forSegment: behavior.rawValue)
-            behaviorSegment.setToolTip(behavior.label, forSegment: behavior.rawValue)
-        }
+        refreshLanguage()
         behaviorSegment.selectedSegment = AppBehavior.inferred.rawValue
 
         let controls = NSStackView(views: [appNameLabel, behaviorSegment])
@@ -86,6 +82,19 @@ final class CurrentAppViewController: NSViewController, BehaviorDidChangeObserve
             controls.centerYAnchor.constraint(equalTo: row.centerYAnchor)
         ])
         view = row
+    }
+
+    /// Translate the rule choices and the fallback for an unnamed application.
+    func refreshLanguage() {
+        behaviorSegment.setAccessibilityLabel(AppLanguage.text("Current application"))
+        for behavior in [AppBehavior.inferred, .media, .function] {
+            behaviorSegment.setImage(behavior.icon.image(description: behavior.label), forSegment: behavior.rawValue)
+            behaviorSegment.setWidth(32, forSegment: behavior.rawValue)
+            behaviorSegment.setToolTip(behavior.label, forSegment: behavior.rawValue)
+        }
+        if currentAppURL != nil {
+            appNameLabel.stringValue = currentAppName ?? AppLanguage.text("An app")
+        }
     }
     
     override func viewDidLoad() {
@@ -146,15 +155,12 @@ final class CurrentAppViewController: NSViewController, BehaviorDidChangeObserve
         
         self.currentAppID = id
         self.currentAppURL = url
+        currentAppName = app.localizedName
         let behavior = AppManager.default.behaviorForApp(id: id)
         
         behaviorSegment.setSelected(true, forSegment: behavior.rawValue)
         appIconView.image = app.icon
-        if let name = app.localizedName {
-            appNameLabel.stringValue = name
-        } else {
-            appNameLabel.stringValue = NSLocalizedString("An app", comment: "Fallback application name")
-        }
+        appNameLabel.stringValue = currentAppName ?? AppLanguage.text("An app")
     }
     
     // MARK: - ActiveApplicationDidChangeObserver

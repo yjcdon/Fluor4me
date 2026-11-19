@@ -36,24 +36,21 @@ final class RunningAppsViewController: NSViewController, NSTableViewDelegate {
         didSet { itemsArrayController.content = runningApps }
     }
     private var showAll = AppManager.default.showAllRunningProcesses
+    private lazy var showAllButton = NSButton(title: "", target: self, action: #selector(toggleShowAll(_:)))
 
     override func loadView() {
-        let showAllButton = NSButton(title: showAllTitle, target: self, action: #selector(toggleShowAll(_:)))
         let list = ApplicationListView(controls: [showAllButton])
         view = list
         list.searchField.target = self
         list.searchField.action = #selector(filterApps(_:))
         list.tableView.delegate = self
-        list.countLabel.bind(NSBindingName("displayPatternValue1"), to: itemsArrayController,
-                             withKeyPath: "arrangedObjects.@count", options: [
-            .displayPattern: NSLocalizedString("%{value1}@ running", comment: "")
-        ])
 
         itemsArrayController.sortDescriptors = [
             NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.caseInsensitiveCompare(_:)))
         ]
         reloadData()
         tableContentAnimator = TableViewContentAnimator(tableView: list.tableView, arrayController: itemsArrayController)
+        refreshLanguage()
         let notifications = NSWorkspace.shared.notificationCenter
         notifications.addObserver(self, selector: #selector(appDidLaunch(_:)), name: NSWorkspace.didLaunchApplicationNotification, object: nil)
         notifications.addObserver(self, selector: #selector(appDidTerminate(_:)), name: NSWorkspace.didTerminateApplicationNotification, object: nil)
@@ -65,7 +62,14 @@ final class RunningAppsViewController: NSViewController, NSTableViewDelegate {
     }
 
     private var showAllTitle: String {
-        showAll ? NSLocalizedString("Hide services", comment: "") : NSLocalizedString("Show all", comment: "")
+        AppLanguage.text(showAll ? "Hide services" : "Show all")
+    }
+
+    /// Translate the running-app controls while preserving the current filters.
+    func refreshLanguage() {
+        guard isViewLoaded, let list = view as? ApplicationListView else { return }
+        showAllButton.title = showAllTitle
+        list.refreshLanguage(countFormat: "%{value1}@ running", items: itemsArrayController)
     }
 
     /// Show apps and background services or restrict the list to regular apps.

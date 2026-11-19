@@ -9,7 +9,6 @@ final class ApplicationListView: NSView {
     init(controls: [NSView]) {
         super.init(frame: NSRect(x: 0, y: 0, width: 360, height: 480))
 
-        searchField.placeholderString = NSLocalizedString("Search", comment: "")
         searchField.sendsSearchStringImmediately = true
 
         let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("Application"))
@@ -49,5 +48,18 @@ final class ApplicationListView: NSView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    /// Change the search and count labels while keeping the list's current contents and selection.
+    func refreshLanguage(countFormat: String, items: NSArrayController) {
+        searchField.placeholderString = AppLanguage.text("Search")
+        let binding = NSBindingName("displayPatternValue1")
+        if countLabel.infoForBinding(binding) != nil { countLabel.unbind(binding) }
+        countLabel.bind(binding, to: items, withKeyPath: "arrangedObjects.@count", options: [
+            .displayPattern: AppLanguage.text(countFormat)
+        ])
+        tableView.enumerateAvailableRowViews { row, _ in
+            (row.view(atColumn: 0) as? RuleCellView)?.refreshLanguage()
+        }
     }
 }

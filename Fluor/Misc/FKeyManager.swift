@@ -45,15 +45,15 @@ enum FKeyManager {
         var errorDescription: String? {
             switch self {
             case .cannotCreateMasterPort:
-                return NSLocalizedString("Master port creation failed (E1)", comment: "Function key error")
+                return AppLanguage.text("Master port creation failed (E1)")
             case .cannotOpenService:
-                return NSLocalizedString("Service opening failed (E2)", comment: "Function key error")
+                return AppLanguage.text("Service opening failed (E2)")
             case .cannotSetParameter:
-                return NSLocalizedString("Parameter set not possible (E3)", comment: "Function key error")
+                return AppLanguage.text("Parameter set not possible (E3)")
             case .cannotGetParameter:
-                return NSLocalizedString("Parameter read not possible (E4)", comment: "Function key error")
+                return AppLanguage.text("Parameter read not possible (E4)")
             case .otherError:
-                return NSLocalizedString("Unknown error (E99)", comment: "Function key error")
+                return AppLanguage.text("Unknown error (E99)")
             }
         }
     }

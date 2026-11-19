@@ -30,34 +30,40 @@
 import Cocoa
 
 final class SwitchMethodViewController: NSViewController, SwitchMethodDidChangePoster {
+    private let titleLabel = NSTextField(labelWithString: "")
     private let methodControl = NSSegmentedControl()
     private lazy var permissionButton = NSButton(
-        title: NSLocalizedString("Ask permission", comment: "Accessibility authorization"),
-        target: self, action: #selector(askAccessibilityPermission(_:))
+        title: "", target: self, action: #selector(askAccessibilityPermission(_:))
     )
 
     override func loadView() {
-        let title = NSTextField(labelWithString: NSLocalizedString("Trigger", comment: "Menu row"))
         methodControl.segmentStyle = .rounded
         methodControl.trackingMode = .selectOne
         methodControl.controlSize = .small
         methodControl.segmentCount = 3
         methodControl.target = self
         methodControl.action = #selector(changeSwitchMethod(_:))
-        methodControl.setAccessibilityLabel(title.stringValue)
+        permissionButton.bezelStyle = .rounded
+        permissionButton.controlSize = .small
+        refreshLanguage()
+        view = MenuItemView.row(title: titleLabel, controls: [methodControl, permissionButton])
+    }
+
+    /// Translate the trigger choices and permission action.
+    func refreshLanguage() {
+        titleLabel.stringValue = AppLanguage.text("Trigger")
+        methodControl.setAccessibilityLabel(titleLabel.stringValue)
+        permissionButton.title = AppLanguage.text("Ask permission")
         let toolTips = [
-            NSLocalizedString("Change mode with the active application", comment: "Trigger option"),
-            NSLocalizedString("Set mode for the active application when the fn key is pressed", comment: "Trigger option"),
-            NSLocalizedString("Set the default mode when the fn key is pressed", comment: "Trigger option")
+            AppLanguage.text("Change mode with the active application"),
+            AppLanguage.text("Set mode for the active application when the fn key is pressed"),
+            AppLanguage.text("Set the default mode when the fn key is pressed")
         ]
         for (index, icon) in [FluorIcon.activeApplication, .combinedTrigger, .fnKey].enumerated() {
             methodControl.setImage(icon.image(description: toolTips[index]), forSegment: index)
             methodControl.setWidth(32, forSegment: index)
             methodControl.setToolTip(toolTips[index], forSegment: index)
         }
-        permissionButton.bezelStyle = .rounded
-        permissionButton.controlSize = .small
-        view = MenuItemView.row(title: title, controls: [methodControl, permissionButton])
     }
 
     /// Show permission recovery until macOS grants access for the Fn shortcut.

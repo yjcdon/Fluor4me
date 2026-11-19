@@ -32,7 +32,7 @@ import Cocoa
 enum AppErrorManager {
     static func showError(withReason reason: @autoclosure () -> String, andMessage msg: String? = nil) {
         let info = reason()
-        let message = msg ?? NSLocalizedString("An unexpected error occurred.", comment: "")
+        let message = msg ?? AppLanguage.text("An unexpected error occurred.")
         let alert = NSAlert()
         
         alert.alertStyle = .warning
@@ -43,7 +43,7 @@ enum AppErrorManager {
     
     static func terminateApp(withReason reason: @autoclosure () -> String, andMessage msg: String? = nil) -> Never {
         let info = reason()
-        let message = msg ?? NSLocalizedString("An unexpected error occurred.", comment: "")
+        let message = msg ?? AppLanguage.text("An unexpected error occurred.")
         let alert = NSAlert()
         
         alert.alertStyle = .critical

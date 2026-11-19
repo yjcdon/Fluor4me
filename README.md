@@ -12,7 +12,7 @@ Fluor4me 是一款 macOS 菜单栏工具，可按应用切换功能键模式，�
 
 ## 2.6.0
 
-- 「设置 → 一般」可以切换简体中文和英文，退出并重新打开后生效。这里也可以启用登录时启动。「设置 → 关于」可以查看版本和打开项目主页。
+- 「设置 → 一般」可以即时切换简体中文和英文，也可以启用登录时启动。「设置 → 关于」可以查看版本和打开项目主页。
 - 设置、规则和运行中的应用窗口支持最小化和用 ⌘W 关闭。关闭窗口后仍可从菜单栏使用 Fluor4me。
 - 支持 Apple 芯片 Mac，要求 macOS 14 或更新版本。使用 Python 3 和 macOS Command Line Tools 运行 `./scripts/build-app.py`，生成 `dist/Fluor4me.app`。
 
@@ -32,7 +32,7 @@ Fluor4me is a macOS menu bar utility that switches function-key modes per app an
 
 ### 2.6.0
 
-- Use Settings → General to choose Simplified Chinese or English and enable launch at login. Quit and reopen the app to apply a language change. Settings → About shows the version and links to the project.
+- Use Settings → General to switch instantly between Simplified Chinese and English or enable launch at login. Settings → About shows the version and links to the project.
 - Minimize the Settings, Rules, and Running Applications windows or close them with ⌘W. Fluor4me stays available in the menu bar.
 - Requires an Apple silicon Mac with macOS 14 or later. Run `./scripts/build-app.py` with Python 3 and macOS Command Line Tools to build `dist/Fluor4me.app`.
 

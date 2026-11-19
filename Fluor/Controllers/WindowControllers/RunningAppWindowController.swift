@@ -36,12 +36,17 @@ final class RunningAppWindowController: NSWindowController {
             contentRect: NSRect(x: 0, y: 0, width: 360, height: 480),
             styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false
         )
-        window.title = NSLocalizedString("Running Applications", comment: "")
+        window.title = AppLanguage.text("Running Applications")
         window.contentViewController = RunningAppsViewController()
         window.contentMinSize = NSSize(width: 340, height: 240)
         window.isReleasedWhenClosed = false
         window.center()
         window.setFrameAutosaveName("Fluor_RunningAppsWindowAutosaveName")
         return RunningAppWindowController(window: window)
+    }
+
+    func refreshLanguage() {
+        window?.title = AppLanguage.text("Running Applications")
+        (window?.contentViewController as? RunningAppsViewController)?.refreshLanguage()
     }
 }

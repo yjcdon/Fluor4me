@@ -57,6 +57,13 @@ final class MenuItemsController: NSObject, SwitchMethodDidChangeObserver, Trigge
         updateSwitchMethod(AppManager.default.switchMethod)
     }
 
+    /// Update the custom menu rows in place.
+    func refreshLanguage() {
+        switchMethodViewController.refreshLanguage()
+        currentAppViewController.refreshLanguage()
+        defaultModeViewController.refreshLanguage()
+    }
+
     /// Read preferences when the menu opens so edits from other windows are visible.
     func refreshControls(isEnabled: Bool, canSwitch: Bool) {
         updateSwitchMethod(AppManager.default.switchMethod)

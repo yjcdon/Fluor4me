@@ -32,6 +32,7 @@ import Cocoa
 @main
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let statusMenuController = StatusMenuController()
+    private let closeWindowItem = NSMenuItem(title: "", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
 
     /// Start the menu bar application without loading a main nib.
     static func main() {
@@ -39,27 +40,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let delegate = AppDelegate()
         app.delegate = delegate
         app.setActivationPolicy(.accessory)
-        app.mainMenu = makeMainMenu()
         app.run()
         withExtendedLifetime(delegate) {}
     }
 
     /// Route Command-W through AppKit to the front window, including for a menu bar app.
-    private static func makeMainMenu() -> NSMenu {
+    private func makeMainMenu() -> NSMenu {
         let mainMenu = NSMenu()
         let fileMenu = NSMenu()
         let fileItem = NSMenuItem()
         fileItem.submenu = fileMenu
         mainMenu.addItem(fileItem)
-        fileMenu.addItem(
-            withTitle: NSLocalizedString("Close Window", comment: ""),
-            action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w"
-        )
+        closeWindowItem.title = AppLanguage.text("Close Window")
+        fileMenu.addItem(closeWindowItem)
         return mainMenu
     }
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         migratePreferences()
+        NSApp.mainMenu = makeMainMenu()
         // Check accessibility
         if !AXIsProcessTrusted() && !AppManager.default.hasAlreadyAnsweredAccessibility {
             let options : NSDictionary = [kAXTrustedCheckOptionPrompt.takeRetainedValue(): true]
@@ -68,6 +67,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         
         statusMenuController.start()
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(refreshLanguage(_:)), name: AppLanguage.didChange, object: nil
+        )
+    }
+
+    /// Refresh the close command and the already-created windows and menu.
+    @objc private func refreshLanguage(_ notification: Notification) {
+        closeWindowItem.title = AppLanguage.text("Close Window")
+        statusMenuController.refreshLanguage()
     }
     
     func applicationWillTerminate(_ notification: Notification) {

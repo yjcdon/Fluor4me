@@ -30,21 +30,13 @@
 import AppKit
 
 final class PreferencesTabViewController: NSTabViewController, TriggerSectionVisibilityDidChangePoster, SwitchMethodDidChangePoster {
-    private static let languageKey = "AppleLanguages"
-    private static let languageAtLaunch = Bundle.main.preferredLocalizations.first ?? "en"
-
     private let preferences = AppManager.default
     private let loginController = LaunchAtLoginController()
+    private let aboutController = AboutViewController()
+    private var languageUpdates: [() -> Void] = []
     private lazy var restoreStartup = checkbox("Restore startup mode", checked: preferences.shouldRestorePreviousState,
                                                action: #selector(changeRestoreStartup(_:)))
     private lazy var quitMode = modeControl(preferences.onQuitState, action: #selector(changeQuitMode(_:)))
-    private lazy var languageRestartHint: NSTextField = {
-        let text = NSLocalizedString("Quit and reopen Fluor4me to apply.", comment: "Language setting")
-        let label = NSTextField(labelWithString: text)
-        label.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
-        label.textColor = .secondaryLabelColor
-        return label
-    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,65 +44,76 @@ final class PreferencesTabViewController: NSTabViewController, TriggerSectionVis
         canPropagateSelectedChildViewControllerTitle = false
         addTab("General", icon: .settings, controller: generalPane())
         addTab("Advanced", icon: .advanced, controller: advancedPane())
-        addTab("About", icon: .about, controller: AboutViewController())
+        addTab("About", icon: .about, controller: aboutController)
     }
 
     private func addTab(_ title: String, icon: FluorIcon, controller: NSViewController) {
         let item = NSTabViewItem(viewController: controller)
-        item.label = NSLocalizedString(title, comment: "Settings tab")
+        localize { item.label = AppLanguage.text(title) }
         item.image = icon.image(size: 17)
         addTabViewItem(item)
     }
 
+    /// Keep the selected tab and controls, refreshing only their display text.
+    func refreshLanguage() {
+        languageUpdates.forEach { $0() }
+        aboutController.refreshLanguage()
+    }
+
+    private func localize(_ update: @escaping () -> Void) {
+        update()
+        languageUpdates.append(update)
+    }
+
     private func generalPane() -> NSViewController {
-        let startAtLogin = NSButton(
-            checkboxWithTitle: NSLocalizedString("Start Fluor at login", comment: ""), target: nil, action: nil
-        )
+        let startAtLogin = NSButton(checkboxWithTitle: "", target: nil, action: nil)
+        localize { startAtLogin.title = AppLanguage.text("Start Fluor at login") }
         startAtLogin.bind(.value, to: loginController, withKeyPath: #keyPath(LaunchAtLoginController.launchAtLogin))
 
-        let startupLabel = NSLocalizedString("Default mode on launch", comment: "")
+        let startupLabel = NSTextField(labelWithString: "")
         let startup = modeControl(preferences.defaultFKeyMode, action: nil)
         startup.bind(.selectedIndex, to: NSUserDefaultsController.shared, withKeyPath: "values.DefaultKeyboardMode",
                      options: [.nullPlaceholder: FKeyMode.media.rawValue])
-        startup.setAccessibilityLabel(startupLabel)
-        let startupRow = NSStackView(views: [NSTextField(labelWithString: startupLabel), startup])
+        localize {
+            startupLabel.stringValue = AppLanguage.text("Default mode on launch")
+            startup.setAccessibilityLabel(startupLabel.stringValue)
+        }
+        let startupRow = NSStackView(views: [startupLabel, startup])
         startupRow.orientation = .horizontal
         startupRow.alignment = .centerY
 
         let resetOnQuit = checkbox("Reset mode on quit", checked: preferences.shouldRestoreStateOnQuit,
                                    action: #selector(changeResetOnQuit(_:)))
-        quitMode.setAccessibilityLabel(NSLocalizedString("Reset mode on quit", comment: ""))
+        let quitMode = self.quitMode
+        localize { quitMode.setAccessibilityLabel(AppLanguage.text("Reset mode on quit")) }
         updateQuitControls()
-        return pane([languageRow(), languageRestartHint, startAtLogin, startupRow, resetOnQuit, restoreStartup, quitMode])
+        return pane([languageRow(), startAtLogin, startupRow, resetOnQuit, restoreStartup, quitMode])
     }
 
     private func languageRow() -> NSView {
-        let title = NSLocalizedString("Language", comment: "Language setting")
+        let title = NSTextField(labelWithString: "")
         let popup = NSPopUpButton()
-        for (identifier, name) in [("zh-Hans", "简体中文"), ("en", "English")] {
-            popup.addItem(withTitle: name)
-            popup.lastItem?.representedObject = identifier
+        for language in AppLanguage.allCases {
+            popup.addItem(withTitle: language.name)
         }
-        let preferred = UserDefaults.standard.stringArray(forKey: Self.languageKey)?.first
-        let preferredItem = popup.itemArray.first { ($0.representedObject as? String) == preferred }
-        let currentItem = popup.itemArray.first { ($0.representedObject as? String) == Self.languageAtLaunch }
-        popup.select(preferredItem ?? currentItem)
-        popup.setAccessibilityLabel(title)
+        localize {
+            title.stringValue = AppLanguage.text("Language")
+            popup.setAccessibilityLabel(title.stringValue)
+            popup.selectItem(withTitle: AppLanguage.current.name)
+        }
         popup.target = self
         popup.action = #selector(changeLanguage(_:))
-        languageRestartHint.isHidden = popup.selectedItem == currentItem
 
-        let row = NSStackView(views: [NSTextField(labelWithString: title), popup])
+        let row = NSStackView(views: [title, popup])
         row.orientation = .horizontal
         row.alignment = .centerY
         return row
     }
 
-    /// Set the bundle's language for the next launch without changing the system language.
+    /// Apply the chosen language immediately and remember it for future launches.
     @objc private func changeLanguage(_ sender: NSPopUpButton) {
-        guard let identifier = sender.selectedItem?.representedObject as? String else { return }
-        UserDefaults.standard.set([identifier], forKey: Self.languageKey)
-        languageRestartHint.isHidden = identifier == Self.languageAtLaunch
+        guard let language = AppLanguage.allCases.first(where: { $0.name == sender.titleOfSelectedItem }) else { return }
+        AppLanguage.select(language)
     }
 
     private func advancedPane() -> NSViewController {
@@ -119,7 +122,7 @@ final class PreferencesTabViewController: NSTabViewController, TriggerSectionVis
         let trigger = checkbox("Hide the trigger method selection section", checked: preferences.hideSwitchMethod,
                                action: #selector(changeTriggerSectionVisibility(_:)))
 
-        let delayLabel = NSLocalizedString("Fn key release maximum delay", comment: "")
+        let delayLabel = NSTextField(labelWithString: "")
         let delay = NSTextField()
         let format = NumberFormatter()
         format.numberStyle = .decimal
@@ -131,10 +134,13 @@ final class PreferencesTabViewController: NSTabViewController, TriggerSectionVis
         delay.target = self
         delay.action = #selector(changeFnDelay(_:))
         (delay.cell as? NSTextFieldCell)?.sendsActionOnEndEditing = true
-        delay.setAccessibilityLabel(delayLabel)
+        localize {
+            delayLabel.stringValue = AppLanguage.text("Fn key release maximum delay")
+            delay.setAccessibilityLabel(delayLabel.stringValue)
+        }
         delay.widthAnchor.constraint(equalToConstant: 58).isActive = true
 
-        let delayRow = NSStackView(views: [NSTextField(labelWithString: delayLabel), delay, NSTextField(labelWithString: "ms")])
+        let delayRow = NSStackView(views: [delayLabel, delay, NSTextField(labelWithString: "ms")])
         delayRow.orientation = .horizontal
         delayRow.alignment = .centerY
         return pane([processes, trigger, delayRow])
@@ -144,12 +150,17 @@ final class PreferencesTabViewController: NSTabViewController, TriggerSectionVis
         let control = NSSegmentedControl(
             labels: [FKeyMode.media.label, FKeyMode.function.label], trackingMode: .selectOne, target: self, action: action
         )
+        localize {
+            control.setLabel(FKeyMode.media.label, forSegment: FKeyMode.media.rawValue)
+            control.setLabel(FKeyMode.function.label, forSegment: FKeyMode.function.rawValue)
+        }
         control.selectedSegment = selection.rawValue
         return control
     }
 
     private func checkbox(_ title: String, checked: Bool, action: Selector) -> NSButton {
-        let button = NSButton(checkboxWithTitle: NSLocalizedString(title, comment: ""), target: self, action: action)
+        let button = NSButton(checkboxWithTitle: "", target: self, action: action)
+        localize { button.title = AppLanguage.text(title) }
         button.state = checked ? .on : .off
         return button
     }

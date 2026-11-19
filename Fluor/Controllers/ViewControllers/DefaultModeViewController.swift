@@ -36,7 +36,7 @@ protocol DefaultModeViewControllerDelegate: AnyObject {
 final class DefaultModeViewController: NSViewController {
     weak var delegate: DefaultModeViewControllerDelegate?
 
-    private let titleLabel = NSTextField(labelWithString: NSLocalizedString("Default mode", comment: "Menu row"))
+    private let titleLabel = NSTextField(labelWithString: "")
     private let modeControl = NSSegmentedControl()
 
     override func loadView() {
@@ -46,6 +46,13 @@ final class DefaultModeViewController: NSViewController {
         modeControl.segmentCount = 2
         modeControl.target = self
         modeControl.action = #selector(changeMode(_:))
+        refreshLanguage()
+        view = MenuItemView.row(title: titleLabel, controls: [modeControl])
+    }
+
+    /// Translate the default mode row and its segment descriptions.
+    func refreshLanguage() {
+        titleLabel.stringValue = AppLanguage.text("Default mode")
         modeControl.setAccessibilityLabel(titleLabel.stringValue)
         for mode in [FKeyMode.media, .function] {
             if let icon = mode.icon.image(description: mode.label) {
@@ -56,7 +63,6 @@ final class DefaultModeViewController: NSViewController {
             }
             modeControl.setToolTip(mode.label, forSegment: mode.rawValue)
         }
-        view = MenuItemView.row(title: titleLabel, controls: [modeControl])
     }
 
     /// Show the saved fallback mode and disable editing while keyboard management is paused.

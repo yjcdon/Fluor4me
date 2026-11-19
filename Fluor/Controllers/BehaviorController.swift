@@ -295,7 +295,9 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
     }
     
     private func fnKeyPressedImpactsApp() {
-        guard let url = self.currentAppURL else { AppErrorManager.terminateApp(withReason: "An unexpected error occured") }
+        guard let url = self.currentAppURL else {
+            AppErrorManager.terminateApp(withReason: AppLanguage.text("An unexpected error occurred."))
+        }
         let appBehavior = AppManager.default.behaviorForApp(id: self.currentAppID)
         let defaultBehavior = AppManager.default.defaultFKeyMode.behavior
         

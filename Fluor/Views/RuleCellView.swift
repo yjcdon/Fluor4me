@@ -55,14 +55,6 @@ final class RuleCellView: NSTableCellView {
         modeControl.trackingMode = .selectOne
         modeControl.target = self
         modeControl.action = #selector(changeMode(_:))
-        for (index, behavior) in behaviors.enumerated() {
-            if let image = behavior.icon.image(description: behavior.label) {
-                modeControl.setImage(image, forSegment: index)
-            } else {
-                modeControl.setLabel(behavior.label, forSegment: index)
-            }
-            modeControl.setToolTip(behavior.label, forSegment: index)
-        }
         modeControl.setContentCompressionResistancePriority(.required, for: .horizontal)
 
         var views: [NSView] = [icon, name, modeControl]
@@ -87,6 +79,7 @@ final class RuleCellView: NSTableCellView {
 
     /// Refresh a reused row and track edits from the other rule entry points.
     func display(_ item: Item) {
+        refreshLanguage()
         objectValue = item
         imageView?.image = item.icon
         toolTip = item.url.path
@@ -98,6 +91,18 @@ final class RuleCellView: NSTableCellView {
         behaviorObservation = item.observe(\.behavior) { [weak self] item, _ in
             guard let self else { return }
             self.modeControl.selectedSegment = self.behaviors.firstIndex(of: item.behavior) ?? -1
+        }
+    }
+
+    /// Translate control help in place without changing the rule or its selected segment.
+    func refreshLanguage() {
+        for (index, behavior) in behaviors.enumerated() {
+            if let image = behavior.icon.image(description: behavior.label) {
+                modeControl.setImage(image, forSegment: index)
+            } else {
+                modeControl.setLabel(behavior.label, forSegment: index)
+            }
+            modeControl.setToolTip(behavior.label, forSegment: index)
         }
     }
 

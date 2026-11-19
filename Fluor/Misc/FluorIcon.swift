@@ -47,13 +47,17 @@ enum MenuBarIcon: String {
     case function = "IconOtherMode"
     case paused = "IconDisabled"
 
+    var accessibilityDescription: String {
+        switch self {
+        case .media: return FKeyMode.media.label
+        case .function: return FKeyMode.function.label
+        case .paused: return AppLanguage.text("Disabled")
+        }
+    }
+
     var image: NSImage? {
         let image = NSImage(named: rawValue)
-        switch self {
-        case .media: image?.accessibilityDescription = FKeyMode.media.label
-        case .function: image?.accessibilityDescription = FKeyMode.function.label
-        case .paused: image?.accessibilityDescription = NSLocalizedString("Disabled", comment: "Status icon")
-        }
+        image?.accessibilityDescription = accessibilityDescription
         image?.isTemplate = true
         return image
     }
