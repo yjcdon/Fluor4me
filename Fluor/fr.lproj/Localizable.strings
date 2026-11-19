@@ -28,11 +28,11 @@
 "Change mode with the active application" = "Bascule le mode en fonction de l'application active";
 "Current application" = "Application active";
 "Default mode" = "Mode par défaut";
-"Default mode on launch" = "Mode par défaut au lancement";
+"Default mode on launch" = "Mode au lancement";
 "Delete selected rule" = "Supprimer la règle selectionnée";
 "Disabled" = "Désactivé";
 "Fluor4me on GitHub" = "Fluor4me sur GitHub";
-"Fn key release maximum delay" = "Durée maximum de la pression de la touche Fn";
+"Fn key release maximum delay" = "Durée maximale d’un appui sur Fn";
 "General" = "Général";
 "Hide services" = "Cacher les services";
 "Hide the trigger method selection section" = "Cacher la section Déclencheur";

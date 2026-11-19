@@ -37,7 +37,7 @@ final class PreferencesWindowController: NSWindowController {
         window.styleMask = [.titled, .closable, .miniaturizable]
         window.toolbarStyle = .preference
         window.isReleasedWhenClosed = false
-        window.setContentSize(NSSize(width: 520, height: 224))
+        window.setContentSize(NSSize(width: 380, height: 196))
         window.center()
         window.setFrameAutosaveName("Fluor_NewPreferencesWindowAutosaveName")
         return PreferencesWindowController(window: window)
