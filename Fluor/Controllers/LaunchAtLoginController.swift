@@ -1,7 +1,6 @@
 import AppKit
 import ServiceManagement
 
-@objc(LaunchAtLoginController)
 final class LaunchAtLoginController: NSObject {
     private let service = SMAppService.mainApp
 

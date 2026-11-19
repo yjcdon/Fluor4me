@@ -29,7 +29,7 @@
 
 import Cocoa
 
-final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuControlObserver {
+final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate {
     private let statusMenu = NSMenu()
     private var menuItemsController: MenuItemsController!
     let behaviorController = BehaviorController()
@@ -51,17 +51,11 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
         menuItemsController.setupController()
         behaviorController.statusMenuController = self
         behaviorController.setupController()
-        startObservingMenuControlNotification()
         menuWillOpen(statusMenu)
-    }
-    
-    deinit {
-        stopObservingSwitchMenuControlNotification()
     }
     
     func windowWillClose(_ notification: Notification) {
         guard let object = notification.object as? NSWindow else { return }
-        NotificationCenter.default.removeObserver(self, name: NSWindow.willCloseNotification, object: object)
         if object.isEqual(rulesController?.window) {
             rulesController = nil
         } else if object.isEqual(preferencesController?.window) {
@@ -131,18 +125,6 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
         )
     }
     
-    // MARK: - MenuControlObserver
-    
-    func menuNeedsToOpen(notification: Notification) { }
-    
-    func menuNeedsToClose(notification: Notification) {
-        if let userInfo = notification.userInfo, let animated = userInfo["animated"] as? Bool, !animated {
-            self.statusMenu.cancelTrackingWithoutAnimation()
-        } else {
-            self.statusMenu.cancelTracking()
-        }
-    }
-    
     // MARK: - Menu Actions
     
     /// Open or restore the rules editor from the status menu.
@@ -189,7 +171,6 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
     ///
     /// - parameter sender: The object that sent the action.
     @objc func quitApplication(_ sender: AnyObject) {
-        NSWorkspace.shared.notificationCenter.removeObserver(self)
         NSApp.terminate(self)
     }
 }

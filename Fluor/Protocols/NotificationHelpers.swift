@@ -33,8 +33,6 @@ extension Notification.Name {
     public static let BehaviorDidChangeForApp = Notification.Name("BehaviorDidChangeForApp")
     public static let SwitchMethodDidChange = Notification.Name("SwitchMethodDidChange")
     public static let TriggerSectionVisibilityDidChange = Notification.Name("TriggerSectionVisibilityDidChange")
-    public static let MenuNeedsToOpen = Notification.Name("MenuNeedsToOpen")
-    public static let MenuNeedsToClose = Notification.Name("MenuNeedsToClose")
 }
 
 @objc protocol ActiveApplicationDidChangeObserver {
@@ -126,40 +124,5 @@ extension TriggerSectionVisibilityDidChangePoster {
     func postTriggerSectionVisibilityDidChange(visible: Bool) {
         let userInfo = ["visible": visible]
         NotificationCenter.default.post(name: .TriggerSectionVisibilityDidChange, object: self, userInfo: userInfo)
-    }
-}
-
-// MARK: -
-// MARK: Menu control notifications
-@objc protocol MenuControlObserver {
-    func menuNeedsToOpen(notification: Notification)
-    func menuNeedsToClose(notification: Notification)
-}
-
-extension MenuControlObserver {
-    func startObservingMenuControlNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(menuNeedsToOpen(notification:)), name: .MenuNeedsToOpen, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(menuNeedsToClose(notification:)), name: .MenuNeedsToClose, object: nil)
-
-    }
-    func stopObservingSwitchMenuControlNotification() {
-        NotificationCenter.default.removeObserver(self, name: .MenuNeedsToOpen, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .MenuNeedsToClose, object: nil)
-    }
-}
-
-protocol MenuControlPoster {
-    func postMenuNeedsToOpenNotification()
-    func postMenuNeedsToCloseNotification(animated: Bool)
-}
-
-extension MenuControlPoster {
-    func postMenuNeedsToOpenNotification() {
-        NotificationCenter.default.post(name: .MenuNeedsToOpen, object: self)
-    }
-    
-    func postMenuNeedsToCloseNotification(animated: Bool = true) {
-        let userInfo = ["animated": animated]
-        NotificationCenter.default.post(name: .MenuNeedsToClose, object: self, userInfo: userInfo)
     }
 }

@@ -29,7 +29,7 @@
 
 import Cocoa
 
-final class SwitchMethodViewController: NSViewController, MenuControlPoster, SwitchMethodDidChangePoster {
+final class SwitchMethodViewController: NSViewController, SwitchMethodDidChangePoster {
     private let methodControl = NSSegmentedControl()
     private lazy var permissionButton = NSButton(
         title: NSLocalizedString("Ask permission", comment: "Accessibility authorization"),
@@ -80,7 +80,7 @@ final class SwitchMethodViewController: NSViewController, MenuControlPoster, Swi
 
     /// Close the menu before requesting permission through the system.
     @objc private func askAccessibilityPermission(_ sender: Any) {
-        postMenuNeedsToCloseNotification()
+        view.enclosingMenuItem?.menu?.cancelTracking()
         let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
         AXIsProcessTrustedWithOptions(options)
     }
