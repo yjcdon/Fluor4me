@@ -16,6 +16,8 @@ Fluor4me 是一款 macOS 菜单栏工具，可按应用切换功能键模式，�
 - 设置、规则和运行中的应用窗口支持最小化和用 ⌘W 关闭。关闭窗口后仍可从菜单栏使用 Fluor4me。
 - 发行包面向 Apple 芯片 Mac，要求 macOS 14 或更新版本，采用 ad hoc 临时签名。使用 Python 3 和 macOS Command Line Tools 运行 `./scripts/build-app.py`，可从源码生成 `dist/Fluor4me.app`。
 
+在 macOS 27 上，解压 ZIP 后，将 Fluor4me 放到个人「应用程序」目录 `~/Applications`。已在 macOS 27.2.1 实测，按住 ⌘ 将图标拖出菜单栏可立即隐藏。在「系统设置 → 菜单栏」打开 Fluor4me，图标会立即回来。
+
 Fluor4me 基于 Pierre Tacchi 的 [Fluor](https://github.com/Pyroh/Fluor)，功能键切换参考了 [fntoggle](https://github.com/nelsonjchen/fntoggle)。[MIT 许可证](LICENSE)
 
 ## English
@@ -35,5 +37,7 @@ Fluor4me is a macOS menu bar utility that switches function-key modes per app an
 - Use Settings → General to switch instantly between Simplified Chinese and English or enable launch at login. Settings → About shows the version and links to the project.
 - Minimize the Settings, Rules, and Running Applications windows or close them with ⌘W. Fluor4me stays available in the menu bar.
 - The ad hoc signed release requires an Apple silicon Mac with macOS 14 or later. Run `./scripts/build-app.py` with Python 3 and macOS Command Line Tools to build `dist/Fluor4me.app` from source.
+
+On macOS 27, unzip the release and move Fluor4me to your personal Applications folder, `~/Applications`. On macOS 27.2.1, Command-dragging the icon out of the menu bar hides it immediately. Turning on Fluor4me in System Settings → Menu Bar restores it immediately.
 
 Fluor4me is based on Pierre Tacchi’s [Fluor](https://github.com/Pyroh/Fluor) and draws on [fntoggle](https://github.com/nelsonjchen/fntoggle) for function-key switching. [MIT License](LICENSE)
