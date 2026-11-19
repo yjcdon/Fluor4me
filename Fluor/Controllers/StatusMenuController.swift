@@ -28,7 +28,6 @@
 
 
 import Cocoa
-import DefaultsWrapper
 
 class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuControlObserver {
     //MARK: - Menu Delegate
@@ -47,12 +46,10 @@ class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuCont
         setupStatusMenu()
         self.menuItemsController.setupController()
         self.behaviorController.setupController()
-        startObservingUsesLightIcon()
         startObservingMenuControlNotification()
     }
     
     deinit {
-        stopObservingUsesLightIcon()
         stopObservingSwitchMenuControlNotification()
     }
     
@@ -70,15 +67,6 @@ class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuCont
         }
     }
     
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        switch keyPath {
-        case UserDefaultsKeyName.useLightIcon.rawValue?:
-            adaptStatusMenuIcon()
-        default:
-            return
-        }
-    }
-    
     // MARK: - Private functions
     
     /// Register the menu bar item and let macOS 27 manage visibility through System Settings.
@@ -92,32 +80,8 @@ class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuCont
             self.statusItem.behavior = .removalAllowed
         }
         self.statusItem.menu = statusMenu
-        adaptStatusMenuIcon()
     }
-    
-    
-    /// Adapt status bar icon from user's settings.
-    private func adaptStatusMenuIcon() {
-        let disabledApp = AppManager.default.isDisabled
-        let usesLightIcon = AppManager.default.useLightIcon
-        switch (disabledApp, usesLightIcon) {
-        case (false, false): statusItem.image = #imageLiteral(resourceName: "IconAppleMode")
-        case (false, true): statusItem.image = #imageLiteral(resourceName: "AppleMode")
-        case (true, false): statusItem.image = #imageLiteral(resourceName: "IconDisabled")
-        case (true, true): statusItem.image = #imageLiteral(resourceName: "LighIconDisabled")
-        }
-    }
-    
-    /// Register self as an observer for some notifications.
-    private func startObservingUsesLightIcon() {
-        UserDefaults.standard.addObserver(self, forKeyPath: UserDefaultsKeyName.useLightIcon.rawValue, options: [], context: nil)
-    }
-    
-    /// Unregister self as an observer for some notifications.
-    private func stopObservingUsesLightIcon() {
-        UserDefaults.standard.removeObserver(self, forKeyPath: UserDefaultsKeyName.useLightIcon.rawValue, context: nil)
-    }
-    
+
     // MARK: - NSWindowDelegate
     
     func menuWillOpen(_ menu: NSMenu) {
@@ -204,20 +168,13 @@ class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuCont
     ///
     /// - Parameter sender: The object that sent the action.
     @IBAction func toggleApplicationState(_ sender: NSMenuItem) {
-        let disabled = sender.state == .off
-        if disabled {
-            self.statusItem.image = AppManager.default.useLightIcon ? #imageLiteral(resourceName: "LighIconDisabled") : #imageLiteral(resourceName: "IconDisabled")
-        } else {
-            self.statusItem.image = AppManager.default.useLightIcon ? #imageLiteral(resourceName: "AppleMode") : #imageLiteral(resourceName: "IconAppleMode")
-        }
-        self.behaviorController.setApplicationIsEnabled(disabled)
+        self.behaviorController.setApplicationIsEnabled(sender.state == .off)
     }
     
     /// Terminate the application.
     ///
     /// - parameter sender: The object that sent the action.
     @IBAction func quitApplication(_ sender: AnyObject) {
-        self.stopObservingUsesLightIcon()
         NSWorkspace.shared.notificationCenter.removeObserver(self)
         NSApp.terminate(self)
     }

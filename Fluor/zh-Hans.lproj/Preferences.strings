@@ -1,8 +1,6 @@
 
-
 /* Class = "NSTabViewItem"; label = "Advanced"; ObjectID = "18q-Zg-Tl1"; */
 "18q-Zg-Tl1.label" = "高级";
-
 
 /* Class = "NSTextFieldCell"; title = "Default mode on launch"; ObjectID = "F4H-9X-Gkc"; */
 "F4H-9X-Gkc.title" = "启动时的默认模式";
@@ -10,22 +8,17 @@
 /* Class = "NSTabViewItem"; label = "General"; ObjectID = "Hob-Dv-Dm7"; */
 "Hob-Dv-Dm7.label" = "一般";
 
-
 /* Class = "NSSegmentedCell"; J3t-x7-5C6.ibShadowedToolTips[0] = "Media keys mode"; ObjectID = "J3t-x7-5C6"; */
 "J3t-x7-5C6.ibShadowedToolTips[0]" = "媒体键模式";
 
 /* Class = "NSSegmentedCell"; J3t-x7-5C6.ibShadowedToolTips[1] = "Function keys mode"; ObjectID = "J3t-x7-5C6"; */
 "J3t-x7-5C6.ibShadowedToolTips[1]" = "功能键模式";
 
-
 /* Class = "NSWindow"; title = "Preferences"; ObjectID = "N9r-FQ-Oq3"; */
 "N9r-FQ-Oq3.title" = "偏好设置";
 
-
-
 /* Class = "NSViewController"; title = "Advanced"; ObjectID = "UoT-kw-xfb"; */
 "UoT-kw-xfb.title" = "高级";
-
 
 /* Class = "NSSegmentedCell"; aHs-kY-jFz.ibShadowedToolTips[0] = "Media keys mode"; ObjectID = "aHs-kY-jFz"; */
 "aHs-kY-jFz.ibShadowedToolTips[0]" = "媒体键模式";
@@ -39,27 +32,14 @@
 /* Class = "NSButtonCell"; title = "Restore startup mode"; ObjectID = "cXi-qe-jsD"; */
 "cXi-qe-jsD.title" = "恢复启动时的模式";
 
-
-
-
-
-
 /* Class = "NSTabViewController"; title = "Preferences"; ObjectID = "glG-bk-x2Q"; */
 "glG-bk-x2Q.title" = "偏好设置";
-
-
-
-
-/* Class = "NSButtonCell"; title = "Use light menu icon"; ObjectID = "j3E-2l-1wC"; */
-"j3E-2l-1wC.title" = "使用浅色菜单栏图标";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "280ms"; ObjectID = "kjd-tC-eHL"; */
 "kjd-tC-eHL.ibShadowedIsNilPlaceholder" = "280ms";
 
 /* Class = "NSButtonCell"; title = "Start Fluor at login"; ObjectID = "kkr-ac-7zW"; */
 "kkr-ac-7zW.title" = "登陆时启动 Fluor";
-
-
 
 /* Class = "NSButtonCell"; title = "Reset mode on quit"; ObjectID = "o0g-Zi-PDV"; */
 "o0g-Zi-PDV.title" = "退出时将模式重置为";

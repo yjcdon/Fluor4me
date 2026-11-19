@@ -68,8 +68,14 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
         if let app = NSWorkspace.shared.frontmostApplication {
             self.updateActiveApplication(app)
         }
+        if AppManager.default.isDisabled {
+            self.statusMenuController.statusItem.image = #imageLiteral(resourceName: "IconDisabled")
+        } else {
+            self.showKeyboardMode(self.appliedKeyboardMode)
+        }
     }
 
+    /// Pause or resume keyboard management and update the menu bar icon.
     func setApplicationIsEnabled(_ enabled: Bool) {
         if enabled {
             self.adaptModeForApp(withId: self.currentAppID)
@@ -80,6 +86,7 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
                 self.appliedKeyboardMode = self.onLaunchKeyboardMode
             }
             catch { AppErrorManager.terminateApp(withReason: error.localizedDescription) }
+            self.statusMenuController.statusItem.image = #imageLiteral(resourceName: "IconDisabled")
         }
     }
     
@@ -236,19 +243,18 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
             do { try FKeyManager.setCurrentFKeyMode(mode) }
             catch { AppErrorManager.terminateApp(withReason: error.localizedDescription) }
             self.appliedKeyboardMode = mode
-            self.showKeyboardMode(mode)
         }
+        self.showKeyboardMode(self.appliedKeyboardMode)
         if isChrome { self.chromeF4Shortcut.activate() }
     }
 
+    /// Show the keyboard mode already applied by macOS.
     private func showKeyboardMode(_ mode: FKeyMode) {
         switch mode {
         case .media:
-            os_log("Switch to Apple Mode for %@", self.currentAppID)
-            self.statusMenuController.statusItem.image = AppManager.default.useLightIcon ? #imageLiteral(resourceName: "AppleMode") : #imageLiteral(resourceName: "IconAppleMode") 
+            self.statusMenuController.statusItem.image = #imageLiteral(resourceName: "IconAppleMode")
         case .function:
-            NSLog("Switch to Other Mode for %@", self.currentAppID)
-            self.statusMenuController.statusItem.image = AppManager.default.useLightIcon ? #imageLiteral(resourceName: "OtherMode") : #imageLiteral(resourceName: "IconOtherMode")
+            self.statusMenuController.statusItem.image = #imageLiteral(resourceName: "IconOtherMode")
         }
     }
     

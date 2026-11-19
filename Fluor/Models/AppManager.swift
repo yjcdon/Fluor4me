@@ -39,7 +39,6 @@ extension UserDefaultsKeyName {
     static let onQuitState: UserDefaultsKeyName = "OnQuitState"
     static let disabledOnLunch: UserDefaultsKeyName = "OnLaunchDisabled"
     static let switchMethod: UserDefaultsKeyName = "DefaultSwitchMethod"
-    static let useLightIcon: UserDefaultsKeyName = "UseLightIcon"
     static let showAllRunningProcesses: UserDefaultsKeyName = "ShowAllProcesses"
     static let fnKeyMaximumDelay: UserDefaultsKeyName = "FNKeyReleaseMaximumDelay"
     static let hideSwitchMethod: UserDefaultsKeyName = "HideSwitchMethod"
@@ -72,9 +71,6 @@ class AppManager: BehaviorDidChangePoster {
     
     @Defaults(key: .disabledOnLunch, defaultValue: false)
     var isDisabled: Bool
-    
-    @Defaults(key: .useLightIcon, defaultValue: false)
-    var useLightIcon: Bool
     
     @Defaults(key: .showAllRunningProcesses, defaultValue: false)
     var showAllRunningProcesses: Bool

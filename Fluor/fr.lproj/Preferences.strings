@@ -8,16 +8,11 @@
 /* Class = "NSSegmentedCell"; aHs-kY-jFz.ibShadowedToolTips[1] = "Function keys mode"; ObjectID = "aHs-kY-jFz"; */
 "aHs-kY-jFz.ibShadowedToolTips[1]" = "Mode touches de fonction";
 
-
 /* Class = "NSViewController"; title = "General"; ObjectID = "bdY-l4-Nw7"; */
 "bdY-l4-Nw7.title" = "Général";
 
-
-
 /* Class = "NSButtonCell"; title = "Restore startup mode"; ObjectID = "cXi-qe-jsD"; */
 "cXi-qe-jsD.title" = "Restaurer l'état d'avant le lancement de l'application";
-
-
 
 /* Class = "NSTextFieldCell"; title = "Default mode on launch"; ObjectID = "F4H-9X-Gkc"; */
 "F4H-9X-Gkc.title" = "Mode par défaut au lancement";
@@ -25,16 +20,8 @@
 /* Class = "NSTabViewController"; title = "Preferences"; ObjectID = "glG-bk-x2Q"; */
 "glG-bk-x2Q.title" = "Préférences";
 
-
-
-
 /* Class = "NSTabViewItem"; label = "General"; ObjectID = "Hob-Dv-Dm7"; */
 "Hob-Dv-Dm7.label" = "Général";
-
-
-
-/* Class = "NSButtonCell"; title = "Use light menu icon"; ObjectID = "j3E-2l-1wC"; */
-"j3E-2l-1wC.title" = "Utiliser les icônes discrètes pour le menu principal";
 
 /* Class = "NSSegmentedCell"; J3t-x7-5C6.ibShadowedToolTips[0] = "Media keys mode"; ObjectID = "J3t-x7-5C6"; */
 "J3t-x7-5C6.ibShadowedToolTips[0]" = "Mode touches média";
@@ -42,14 +29,11 @@
 /* Class = "NSSegmentedCell"; J3t-x7-5C6.ibShadowedToolTips[1] = "Function keys mode"; ObjectID = "J3t-x7-5C6"; */
 "J3t-x7-5C6.ibShadowedToolTips[1]" = "Mode touches de fonction";
 
-
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "280ms"; ObjectID = "kjd-tC-eHL"; */
 "kjd-tC-eHL.ibShadowedIsNilPlaceholder" = "280ms";
 
 /* Class = "NSButtonCell"; title = "Start Fluor at login"; ObjectID = "kkr-ac-7zW"; */
 "kkr-ac-7zW.title" = "Lancer Fluor au démarrage";
-
-
 
 /* Class = "NSWindow"; title = "Preferences"; ObjectID = "N9r-FQ-Oq3"; */
 "N9r-FQ-Oq3.title" = "Préférences";
@@ -63,11 +47,8 @@
 /* Class = "NSButtonCell"; title = "Hide the trigger method selection section"; ObjectID = "qxq-5O-b7c"; */
 "qxq-5O-b7c.title" = "Cacher la section Déclencheur";
 
-
 /* Class = "NSTextFieldCell"; title = "Fn key release maximum delay:"; ObjectID = "sJJ-c6-Cuv"; */
 "sJJ-c6-Cuv.title" = "Durée maximum de la pression de la touche Fn:";
-
-
 
 /* Class = "NSViewController"; title = "Advanced"; ObjectID = "UoT-kw-xfb"; */
 "UoT-kw-xfb.title" = "Avancé";
