@@ -39,6 +39,7 @@ final class PreferencesTabViewController: NSTabViewController, TriggerSectionVis
     override func viewDidLoad() {
         super.viewDidLoad()
         tabStyle = .toolbar
+        canPropagateSelectedChildViewControllerTitle = false
         addTab(label: NSLocalizedString("General", comment: ""), image: NSImage.preferencesGeneralName, content: generalPane())
         addTab(label: NSLocalizedString("Advanced", comment: ""), image: NSImage.advancedName, content: advancedPane())
     }
