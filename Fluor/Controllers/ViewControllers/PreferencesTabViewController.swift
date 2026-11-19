@@ -30,11 +30,21 @@
 import AppKit
 
 final class PreferencesTabViewController: NSTabViewController, TriggerSectionVisibilityDidChangePoster, SwitchMethodDidChangePoster {
+    private static let languageKey = "AppleLanguages"
+    private static let languageAtLaunch = Bundle.main.preferredLocalizations.first ?? "en"
+
     private let preferences = AppManager.default
     private let loginController = LaunchAtLoginController()
     private lazy var restoreStartup = checkbox("Restore startup mode", checked: preferences.shouldRestorePreviousState,
                                                action: #selector(changeRestoreStartup(_:)))
     private lazy var quitMode = modeControl(preferences.onQuitState, action: #selector(changeQuitMode(_:)))
+    private lazy var languageRestartHint: NSTextField = {
+        let text = NSLocalizedString("Quit and reopen Fluor4me to apply.", comment: "Language setting")
+        let label = NSTextField(labelWithString: text)
+        label.font = .systemFont(ofSize: NSFont.smallSystemFontSize)
+        label.textColor = .secondaryLabelColor
+        return label
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,7 +81,36 @@ final class PreferencesTabViewController: NSTabViewController, TriggerSectionVis
                                    action: #selector(changeResetOnQuit(_:)))
         quitMode.setAccessibilityLabel(NSLocalizedString("Reset mode on quit", comment: ""))
         updateQuitControls()
-        return pane([startAtLogin, startupRow, resetOnQuit, restoreStartup, quitMode])
+        return pane([languageRow(), languageRestartHint, startAtLogin, startupRow, resetOnQuit, restoreStartup, quitMode])
+    }
+
+    private func languageRow() -> NSView {
+        let title = NSLocalizedString("Language", comment: "Language setting")
+        let popup = NSPopUpButton()
+        for (identifier, name) in [("zh-Hans", "简体中文"), ("en", "English")] {
+            popup.addItem(withTitle: name)
+            popup.lastItem?.representedObject = identifier
+        }
+        let preferred = UserDefaults.standard.stringArray(forKey: Self.languageKey)?.first
+        let preferredItem = popup.itemArray.first { ($0.representedObject as? String) == preferred }
+        let currentItem = popup.itemArray.first { ($0.representedObject as? String) == Self.languageAtLaunch }
+        popup.select(preferredItem ?? currentItem)
+        popup.setAccessibilityLabel(title)
+        popup.target = self
+        popup.action = #selector(changeLanguage(_:))
+        languageRestartHint.isHidden = popup.selectedItem == currentItem
+
+        let row = NSStackView(views: [NSTextField(labelWithString: title), popup])
+        row.orientation = .horizontal
+        row.alignment = .centerY
+        return row
+    }
+
+    /// Set the bundle's language for the next launch without changing the system language.
+    @objc private func changeLanguage(_ sender: NSPopUpButton) {
+        guard let identifier = sender.selectedItem?.representedObject as? String else { return }
+        UserDefaults.standard.set([identifier], forKey: Self.languageKey)
+        languageRestartHint.isHidden = identifier == Self.languageAtLaunch
     }
 
     private func advancedPane() -> NSViewController {
