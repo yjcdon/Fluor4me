@@ -58,7 +58,9 @@ def build(output, identity, debug, scratch):
         f"https://codeload.github.com/Pyroh/DefaultsWrapper/tar.gz/{DEFAULTS_REVISION}",
         "-o", archive)
     run("tar", "-xzf", archive, "-C", scratch)
-    library = scratch / f"DefaultsWrapper-{DEFAULTS_REVISION}" / "Sources" / "DefaultsWrapper"
+    dependency = scratch / f"DefaultsWrapper-{DEFAULTS_REVISION}"
+    shutil.copyfile(dependency / "LICENSE", resources / "DefaultsWrapper-LICENSE")
+    library = dependency / "Sources" / "DefaultsWrapper"
     compiler = [
         "xcrun", "swiftc", "-target", f'arm64-apple-macosx{info["LSMinimumSystemVersion"]}',
         "-swift-version", "5",
