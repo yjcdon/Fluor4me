@@ -56,13 +56,7 @@ final class RuleCellView: NSTableCellView {
         modeControl.target = self
         modeControl.action = #selector(changeMode(_:))
         for (index, behavior) in behaviors.enumerated() {
-            let imageName: String
-            switch behavior {
-            case .inferred: imageName = "DefaultMode"
-            case .media: imageName = "AppleMode"
-            case .function: imageName = "OtherMode"
-            }
-            if let image = FluorImage.named(imageName) {
+            if let image = behavior.icon.image(description: behavior.label) {
                 modeControl.setImage(image, forSegment: index)
             } else {
                 modeControl.setLabel(behavior.label, forSegment: index)
@@ -98,7 +92,7 @@ final class RuleCellView: NSTableCellView {
         toolTip = item.url.path
         textField?.stringValue = item.name
         if let runningApp = item as? RunningApp {
-            kindImageView.image = FluorImage.named(runningApp.isApp ? "App" : "Service")
+            kindImageView.image = (runningApp.isApp ? FluorIcon.activeApplication : .service).image()
         }
         modeControl.selectedSegment = behaviors.firstIndex(of: item.behavior) ?? -1
         behaviorObservation = item.observe(\.behavior) { [weak self] item, _ in

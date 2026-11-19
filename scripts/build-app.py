@@ -21,27 +21,8 @@ def run(*args):
     subprocess.run(args, check=True)
 
 
-def copy_images(resources, scratch):
+def copy_app_icon(resources, scratch):
     assets = FLUOR / "Assets.xcassets"
-    images = resources / "Images"
-    images.mkdir()
-    templates = {}
-    for image_set in sorted(assets.glob("*.imageset")):
-        metadata = json.loads((image_set / "Contents.json").read_text())
-        name = image_set.stem
-        is_template = metadata.get("properties", {}).get("template-rendering-intent") == "template"
-        templates[name] = is_template
-        for item in metadata["images"]:
-            if "filename" not in item:
-                continue
-            dark = any(a["value"] == "dark" for a in item.get("appearances", []))
-            if dark and is_template:
-                continue
-            variant = "-dark" if dark else ""
-            scale = "" if item["scale"] == "1x" else "@" + item["scale"]
-            shutil.copyfile(image_set / item["filename"], images / f"{name}{variant}{scale}.png")
-
-    (resources / "ImageTemplates.plist").write_bytes(plistlib.dumps(templates))
     original = assets / "AppIcon.appiconset"
     iconset = scratch / "AppIcon.iconset"
     iconset.mkdir()
@@ -61,7 +42,7 @@ def build(output, identity, debug, scratch):
 
     info = plistlib.loads((FLUOR / "Info.plist").read_bytes())
     (contents / "Info.plist").write_bytes(plistlib.dumps(info))
-    copy_images(resources, scratch)
+    copy_app_icon(resources, scratch)
     for translations in sorted(FLUOR.glob("*.lproj/Localizable.strings")):
         destination = resources / translations.parent.name
         destination.mkdir()

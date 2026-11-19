@@ -50,8 +50,8 @@ final class SwitchMethodViewController: NSViewController, MenuControlPoster, Swi
             NSLocalizedString("Set mode for the active application when the fn key is pressed", comment: "Trigger option"),
             NSLocalizedString("Set the default mode when the fn key is pressed", comment: "Trigger option")
         ]
-        for (index, name) in ["AppSwitch", "MixedSwitch", "FnKey"].enumerated() {
-            methodControl.setImage(FluorImage.named(name), forSegment: index)
+        for (index, icon) in [FluorIcon.activeApplication, .combinedTrigger, .fnKey].enumerated() {
+            methodControl.setImage(icon.image(description: toolTips[index]), forSegment: index)
             methodControl.setWidth(32, forSegment: index)
             methodControl.setToolTip(toolTips[index], forSegment: index)
         }

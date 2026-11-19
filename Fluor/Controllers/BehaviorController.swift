@@ -68,7 +68,7 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
             self.updateActiveApplication(app)
         }
         if AppManager.default.isDisabled {
-            self.statusMenuController.statusItem.button?.image = FluorImage.named("IconDisabled")
+            self.statusMenuController.statusItem.button?.image = FluorIcon.paused.image(size: 15, description: NSLocalizedString("Disabled", comment: "Status icon"))
         } else {
             self.showKeyboardMode(self.appliedKeyboardMode)
         }
@@ -85,7 +85,7 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
                 self.appliedKeyboardMode = self.onLaunchKeyboardMode
             }
             catch { AppErrorManager.terminateApp(withReason: error.localizedDescription) }
-            self.statusMenuController.statusItem.button?.image = FluorImage.named("IconDisabled")
+            self.statusMenuController.statusItem.button?.image = FluorIcon.paused.image(size: 15, description: NSLocalizedString("Disabled", comment: "Status icon"))
         }
     }
     
@@ -249,12 +249,7 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
 
     /// Show the keyboard mode already applied by macOS.
     private func showKeyboardMode(_ mode: FKeyMode) {
-        switch mode {
-        case .media:
-            self.statusMenuController.statusItem.button?.image = FluorImage.named("IconAppleMode")
-        case .function:
-            self.statusMenuController.statusItem.button?.image = FluorImage.named("IconOtherMode")
-        }
+        self.statusMenuController.statusItem.button?.image = mode.icon.image(size: 15, description: mode.label)
     }
     
     private func manageKeyPress(event: NSEvent) {

@@ -40,16 +40,16 @@ final class PreferencesTabViewController: NSTabViewController, TriggerSectionVis
         super.viewDidLoad()
         tabStyle = .toolbar
         canPropagateSelectedChildViewControllerTitle = false
-        addTab(label: NSLocalizedString("General", comment: ""), image: NSImage.preferencesGeneralName, content: generalPane())
-        addTab(label: NSLocalizedString("Advanced", comment: ""), image: NSImage.advancedName, content: advancedPane())
+        addTab(label: NSLocalizedString("General", comment: ""), icon: .settings, content: generalPane())
+        addTab(label: NSLocalizedString("Advanced", comment: ""), icon: .advanced, content: advancedPane())
     }
 
-    private func addTab(label: String, image: NSImage.Name, content: NSView) {
+    private func addTab(label: String, icon: FluorIcon, content: NSView) {
         let controller = NSViewController()
         controller.view = content
         let item = NSTabViewItem(viewController: controller)
         item.label = label
-        item.image = NSImage(named: image)
+        item.image = icon.image(size: 17)
         addTabViewItem(item)
     }
 

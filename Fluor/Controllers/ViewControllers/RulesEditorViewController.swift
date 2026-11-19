@@ -37,9 +37,9 @@ final class RulesEditorViewController: NSViewController, NSTableViewDelegate, Be
     override func loadView() {
         let addTitle = NSLocalizedString("Add rule", comment: "")
         let removeTitle = NSLocalizedString("Delete selected rule", comment: "")
-        let addButton = NSButton(image: NSImage(named: NSImage.addTemplateName) ?? NSImage(),
+        let addButton = NSButton(image: FluorIcon.add.image(description: addTitle) ?? NSImage(),
                                  target: self, action: #selector(addRule))
-        let removeButton = NSButton(image: NSImage(named: NSImage.removeTemplateName) ?? NSImage(),
+        let removeButton = NSButton(image: FluorIcon.remove.image(description: removeTitle) ?? NSImage(),
                                     target: self, action: #selector(removeRule))
         addButton.toolTip = addTitle
         addButton.setAccessibilityLabel(addTitle)

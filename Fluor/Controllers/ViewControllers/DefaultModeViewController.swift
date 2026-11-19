@@ -47,8 +47,8 @@ final class DefaultModeViewController: NSViewController {
         modeControl.target = self
         modeControl.action = #selector(changeMode(_:))
         modeControl.setAccessibilityLabel(titleLabel.stringValue)
-        for (mode, image) in [(FKeyMode.media, "AppleMode"), (.function, "OtherMode")] {
-            if let icon = FluorImage.named(image) {
+        for mode in [FKeyMode.media, .function] {
+            if let icon = mode.icon.image(description: mode.label) {
                 modeControl.setImage(icon, forSegment: mode.rawValue)
                 modeControl.setWidth(32, forSegment: mode.rawValue)
             } else {

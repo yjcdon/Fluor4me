@@ -63,8 +63,8 @@ final class CurrentAppViewController: NSViewController, BehaviorDidChangeObserve
         behaviorSegment.target = self
         behaviorSegment.action = #selector(behaviorChanged(_:))
         behaviorSegment.setAccessibilityLabel(NSLocalizedString("Current application", comment: "Menu row"))
-        for (behavior, image) in [(AppBehavior.inferred, "DefaultMode"), (.media, "AppleMode"), (.function, "OtherMode")] {
-            behaviorSegment.setImage(FluorImage.named(image), forSegment: behavior.rawValue)
+        for behavior in [AppBehavior.inferred, .media, .function] {
+            behaviorSegment.setImage(behavior.icon.image(description: behavior.label), forSegment: behavior.rawValue)
             behaviorSegment.setWidth(32, forSegment: behavior.rawValue)
             behaviorSegment.setToolTip(behavior.label, forSegment: behavior.rawValue)
         }

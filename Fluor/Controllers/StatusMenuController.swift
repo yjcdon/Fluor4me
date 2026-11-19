@@ -40,10 +40,10 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
     private var preferencesController: PreferencesWindowController?
     private var runningAppsController: RunningAppWindowController?
     
-    private lazy var rulesItem = makeItem("Manage rules...", #selector(editRules(_:)), image: "Rules")
-    private lazy var runningAppsItem = makeItem("Running applications...", #selector(showRunningApps(_:)), image: "RunningApps")
-    private lazy var loginItem = makeToggle("Start Fluor at login", #selector(toggleLaunchAtLogin(_:)))
-    private lazy var disabledItem = makeToggle("Disabled", #selector(toggleApplicationState(_:)))
+    private lazy var rulesItem = makeItem("Manage rules...", #selector(editRules(_:)), icon: .rules)
+    private lazy var runningAppsItem = makeItem("Running applications...", #selector(showRunningApps(_:)), icon: .runningApps)
+    private lazy var loginItem = makeItem("Start Fluor at login", #selector(toggleLaunchAtLogin(_:)))
+    private lazy var disabledItem = makeItem("Disabled", #selector(toggleApplicationState(_:)))
 
     private(set) var statusItem: NSStatusItem!
 
@@ -93,12 +93,12 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
         statusMenu.addItem(rulesItem)
         statusMenu.addItem(runningAppsItem)
         statusMenu.addItem(.separator())
-        statusMenu.addItem(makeItem("Preferences...", #selector(showPreferences(_:)), key: ",", image: "Preferences"))
+        statusMenu.addItem(makeItem("Preferences...", #selector(showPreferences(_:)), key: ",", icon: .settings))
         statusMenu.addItem(loginItem)
         statusMenu.addItem(disabledItem)
         statusMenu.addItem(.separator())
-        statusMenu.addItem(makeItem("About Fluor4me", #selector(showAbout(_:)), image: "About"))
-        statusMenu.addItem(makeItem("Quit", #selector(quitApplication(_:)), key: "q", image: "Quit"))
+        statusMenu.addItem(makeItem("About Fluor4me", #selector(showAbout(_:)), icon: .about))
+        statusMenu.addItem(makeItem("Quit", #selector(quitApplication(_:)), key: "q", icon: .quit))
 
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         self.statusItem.autosaveName = "Fluor4me"
@@ -111,23 +111,11 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
         self.statusItem.menu = statusMenu
     }
 
-    /// Use the existing artwork and command shortcuts for native menu actions.
-    private func makeItem(_ title: String, _ action: Selector, key: String = "", image: String? = nil) -> NSMenuItem {
+    /// Use system icons and command shortcuts for native menu actions.
+    private func makeItem(_ title: String, _ action: Selector, key: String = "", icon: FluorIcon? = nil) -> NSMenuItem {
         let item = NSMenuItem(title: NSLocalizedString(title, comment: "Menu item"), action: action, keyEquivalent: key)
         item.target = self
-        if let image {
-            item.image = FluorImage.named(image)
-        }
-        return item
-    }
-
-    /// Give an on/off item the same state indicators as the previous menu.
-    private func makeToggle(_ title: String, _ action: Selector) -> NSMenuItem {
-        let item = makeItem(title, action)
-        if let on = FluorImage.named("CheckEnabled"), let off = FluorImage.named("CheckDisabled") {
-            item.onStateImage = on
-            item.offStateImage = off
-        }
+        item.image = icon?.image()
         return item
     }
 
