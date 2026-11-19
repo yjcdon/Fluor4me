@@ -38,8 +38,8 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
     private var preferencesController: PreferencesWindowController?
     private var runningAppsController: RunningAppWindowController?
     
-    private lazy var rulesItem = makeItem("Manage rules...", #selector(editRules(_:)), icon: .rules)
-    private lazy var runningAppsItem = makeItem("Running applications...", #selector(showRunningApps(_:)), icon: .runningApps)
+    private lazy var rulesItem = makeItem("Manage rules", #selector(editRules(_:)), icon: .rules)
+    private lazy var runningAppsItem = makeItem("Running applications", #selector(showRunningApps(_:)), icon: .runningApps)
     private lazy var disabledItem = makeItem("Disabled", #selector(toggleApplicationState(_:)))
 
     private(set) var statusItem: NSStatusItem!
@@ -88,7 +88,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
         statusMenu.addItem(rulesItem)
         statusMenu.addItem(runningAppsItem)
         statusMenu.addItem(.separator())
-        statusMenu.addItem(makeItem("Settings...", #selector(showPreferences(_:)), key: ",", icon: .settings))
+        statusMenu.addItem(makeItem("Settings", #selector(showPreferences(_:)), key: ",", icon: .settings))
         statusMenu.addItem(disabledItem)
         statusMenu.addItem(.separator())
         statusMenu.addItem(makeItem("Quit", #selector(quitApplication(_:)), key: "q", icon: .quit))

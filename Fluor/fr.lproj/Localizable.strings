@@ -36,15 +36,14 @@
 "General" = "Général";
 "Hide services" = "Cacher les services";
 "Hide the trigger method selection section" = "Cacher la section Déclencheur";
-"Manage rules..." = "Gérer les règles...";
+"Manage rules" = "Gérer les règles";
 "Settings" = "Réglages";
-"Settings..." = "Réglages...";
 "Quit" = "Quitter";
 "Reset mode on quit" = "Réinitialiser le mode quand l'application termine";
 "Restore startup mode" = "Restaurer l'état d'avant le lancement de l'application";
 "Rules" = "Règles";
 "Running Applications" = "Applications en cours";
-"Running applications..." = "Applications en cours...";
+"Running applications" = "Applications en cours";
 "Search" = "Rechercher";
 "Set mode for the active application when the fn key is pressed" = "Bascule le mode quand la touche Fn est pressée";
 "Set the default mode when the fn key is pressed" = "Modifie le mode par défaut lors d'un appui sur le touche fn";
