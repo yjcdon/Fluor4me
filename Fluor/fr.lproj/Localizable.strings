@@ -14,7 +14,7 @@
 "version %@" = "version %@";
 
 /* Application version and build number in About. */
-"Version %@ build %@" = "Version %@ (build %@)";
+"Version %@" = "Version %@";
 "Copyright (c) 2016 Pierre Tacchi" = "Copyright (c) 2016 Pierre Tacchi";
 
 "%{value1}@ rules" = "%{value1}@ règles";

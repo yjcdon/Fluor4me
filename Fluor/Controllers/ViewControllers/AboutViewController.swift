@@ -34,9 +34,8 @@ final class AboutViewController: NSViewController {
         let name = NSTextField(labelWithString: "Fluor4me")
         name.font = .systemFont(ofSize: 24, weight: .semibold)
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? ""
-        let build = Bundle.main.object(forInfoDictionaryKey: kCFBundleVersionKey as String) as? String ?? ""
-        let format = NSLocalizedString("Version %@ build %@", comment: "Application version and build number in About.")
-        let versionLabel = NSTextField(labelWithString: String(format: format, version, build))
+        let format = NSLocalizedString("Version %@", comment: "Application version in About.")
+        let versionLabel = NSTextField(labelWithString: String(format: format, version))
         let credit = NSTextField(labelWithString: NSLocalizedString("Copyright (c) 2016 Pierre Tacchi", comment: ""))
         credit.textColor = .secondaryLabelColor
 
