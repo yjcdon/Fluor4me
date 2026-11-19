@@ -26,7 +26,7 @@
 //  SOFTWARE.
 //
 
-import DefaultsWrapper
+import Foundation
 
 @objc enum FKeyMode: Int {
     case media = 0

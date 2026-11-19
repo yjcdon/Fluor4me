@@ -27,6 +27,10 @@
 //
 
 
+import Foundation
+import IOKit
+import IOKit.hidsystem
+
 enum FKeyManager {
     typealias FKeyManagerResult = Result<FKeyMode, Error>
     

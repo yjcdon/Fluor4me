@@ -35,6 +35,10 @@ When upgrading from 2.5.1, Fluor4me copies existing keyboard rules and preferenc
 Grant the new app Accessibility access. If System Settings still lists
 `com.yjcdon.Fluor4me` under Menu Bar, use the **Fluor4me** switch for the new app.
 
+To launch Fluor4me at login, turn on the option in the menu or in General
+settings. If macOS asks for approval, enable it in System Settings under Login
+Items. Manage any older entry there as well.
+
 After updating a locally signed build, remove and re-add the app in
 Accessibility settings if macOS rejects the previous authorization.
 
@@ -110,4 +114,4 @@ All contributions are welcome. Fork it, hack it and make a pull request.
 
 Some of [**fntoggle**](https://github.com/nelsonjchen/fntoggle)'s code was used. As its author [wrote](https://github.com/nelsonjchen/fntoggle#license) it could be released under the GPL2 license.
 
-The code also uses [**LaunchAtLoginController**](https://github.com/Mozketo/LaunchAtLoginController) which is Copyright (c) 2010 Ben Clark-Robinson, ben.clarkrobinson@gmail.com and is released under the MIT LICENSE.
+Upstream Fluor used [**LaunchAtLoginController**](https://github.com/Mozketo/LaunchAtLoginController), Copyright (c) 2010 Ben Clark-Robinson, released under the MIT license.
