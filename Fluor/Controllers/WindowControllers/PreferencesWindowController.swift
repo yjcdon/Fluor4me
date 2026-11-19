@@ -34,7 +34,7 @@ final class PreferencesWindowController: NSWindowController {
     static func instantiate() -> PreferencesWindowController {
         let window = NSWindow(contentViewController: PreferencesTabViewController())
         window.title = NSLocalizedString("Preferences", comment: "")
-        window.styleMask = [.titled, .closable]
+        window.styleMask = [.titled, .closable, .miniaturizable]
         window.toolbarStyle = .preference
         window.isReleasedWhenClosed = false
         window.setContentSize(NSSize(width: 520, height: 224))

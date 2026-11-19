@@ -151,67 +151,41 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
     
     // MARK: - Menu Actions
     
-    /// Show the *Edit Rules* window.
-    ///
-    /// - parameter sender: The object that sent the action.
+    /// Open or restore the rules editor from the status menu.
     @objc func editRules(_ sender: AnyObject) {
-        guard rulesController == nil else {
-            rulesController?.window?.orderFrontRegardless()
-            return
-        }
-        rulesController = RulesEditorWindowController.instantiate()
-        rulesController?.window?.delegate = self
-        rulesController?.window?.orderFrontRegardless()
+        rulesController = rulesController ?? .instantiate()
+        showWindow(rulesController)
     }
-    
-    /// Show the *About* window.
-    ///
-    /// - parameter sender: The object that sent the action.
+
+    /// Open or restore the About window from the status menu.
     @objc func showAbout(_ sender: AnyObject) {
-        guard aboutController == nil else {
-            aboutController?.window?.makeKeyAndOrderFront(self)
-            aboutController?.window?.makeMain()
-            NSApp.activate(ignoringOtherApps: true)
-            return
-        }
-        aboutController = AboutWindowController.instantiate()
-        aboutController?.window?.delegate = self
-        aboutController?.window?.makeKeyAndOrderFront(self)
-        aboutController?.window?.makeMain()
-        NSApp.activate(ignoringOtherApps: true)
+        aboutController = aboutController ?? .instantiate()
+        showWindow(aboutController)
     }
-    
-    /// Show the *Preferences* window.
-    ///
-    /// - parameter sender: The object that sent the action.
+
+    /// Open or restore settings from the status menu.
     @objc func showPreferences(_ sender: AnyObject) {
-        guard preferencesController == nil else {
-            preferencesController?.window?.makeKeyAndOrderFront(self)
-            preferencesController?.window?.makeMain()
-            NSApp.activate(ignoringOtherApps: true)
-            return
-        }
-        self.preferencesController = PreferencesWindowController.instantiate()
-        preferencesController?.window?.delegate = self
-        preferencesController?.window?.makeKeyAndOrderFront(self)
-        preferencesController?.window?.makeMain()
-        NSApp.activate(ignoringOtherApps: true)
+        preferencesController = preferencesController ?? .instantiate()
+        showWindow(preferencesController)
     }
-    
-    /// Show the *Running Applications* window.
-    ///
-    /// - parameter sender: The object that sent the action.
+
+    /// Open or restore the running applications window from the status menu.
     @objc func showRunningApps(_ sender: AnyObject) {
-        guard runningAppsController == nil else {
-            runningAppsController?.window?.orderFrontRegardless()
-            return
-        }
-        runningAppsController = RunningAppWindowController.instantiate()
-        runningAppsController?.window?.delegate = self
-        runningAppsController?.window?.orderFrontRegardless()
+        runningAppsController = runningAppsController ?? .instantiate()
+        showWindow(runningAppsController)
     }
-    
-    
+
+    /// Give a user-invoked window focus and restore it if it was minimized.
+    private func showWindow(_ controller: NSWindowController?) {
+        guard let window = controller?.window else { return }
+        window.delegate = self
+        NSApp.activate()
+        if window.isMiniaturized {
+            window.deminiaturize(self)
+        }
+        window.makeKeyAndOrderFront(self)
+    }
+
     /// Enable or disable Fluor fn keys management. 
     /// If disabled the keyboard behaviour is set as its behaviour before app launch.
     ///

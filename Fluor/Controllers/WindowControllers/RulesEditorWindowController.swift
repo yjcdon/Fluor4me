@@ -32,9 +32,9 @@ import AppKit
 final class RulesEditorWindowController: NSWindowController {
     /// Create the rules window with a native, searchable list.
     static func instantiate() -> RulesEditorWindowController {
-        let window = NSPanel(
+        let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 360, height: 480),
-            styleMask: [.titled, .closable, .resizable], backing: .buffered, defer: false
+            styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false
         )
         window.title = NSLocalizedString("Rules", comment: "")
         window.contentViewController = RulesEditorViewController()

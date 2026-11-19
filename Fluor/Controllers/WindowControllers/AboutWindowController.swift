@@ -34,7 +34,7 @@ final class AboutWindowController: NSWindowController {
     static func instantiate() -> AboutWindowController {
         let window = NSWindow(contentViewController: AboutViewController())
         window.title = NSLocalizedString("About Fluor4me", comment: "")
-        window.styleMask = [.titled, .closable]
+        window.styleMask = [.titled, .closable, .miniaturizable]
         window.isReleasedWhenClosed = false
         window.setContentSize(NSSize(width: 300, height: 258))
         window.center()

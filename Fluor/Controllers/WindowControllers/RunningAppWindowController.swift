@@ -32,9 +32,9 @@ import AppKit
 final class RunningAppWindowController: NSWindowController {
     /// Create the running applications window with a native, searchable list.
     static func instantiate() -> RunningAppWindowController {
-        let window = NSPanel(
+        let window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 360, height: 480),
-            styleMask: [.titled, .closable, .resizable], backing: .buffered, defer: false
+            styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false
         )
         window.title = NSLocalizedString("Running Applications", comment: "")
         window.contentViewController = RunningAppsViewController()
