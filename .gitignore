@@ -61,5 +61,4 @@ fastlane/screenshots
 
 # Documentation
 Documentation/docs
-/Fluor/Sparkle.framework
-/Fluor/Sparkle.framework.dSYM
+/dist/

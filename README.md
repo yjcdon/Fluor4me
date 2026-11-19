@@ -44,8 +44,17 @@ Accessibility settings if macOS rejects the previous authorization.
 
 ## Build from source
 
-Open `Fluor.xcodeproj` in Xcode, select your signing identity, and build the
-Fluor scheme. Xcode resolves the Swift package dependencies.
+On an Apple Silicon Mac with macOS Command Line Tools installed, run:
+
+```sh
+./scripts/build-app.py
+```
+
+The script builds an ad-hoc signed app at `dist/Fluor4me.app`. It downloads
+the pinned DefaultsWrapper source. Set `HTTPS_PROXY` to use a proxy. Use
+`--debug` for a Debug build, `--output /path/to/Fluor4me.app` for a different
+location, or `--sign` with a local signing identity. Choose an empty output
+location for each build.
 
 # Upstream Fluor documentation
 
