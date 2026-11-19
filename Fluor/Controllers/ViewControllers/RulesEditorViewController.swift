@@ -96,7 +96,7 @@ final class RulesEditorViewController: NSViewController, NSTableViewDelegate, Be
     @objc private func addRule() {
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = true
-        panel.allowedContentTypes = [.bundle]
+        panel.allowedContentTypes = [.applicationBundle]
         panel.canChooseDirectories = false
         panel.directoryURL = URL(fileURLWithPath: "/Applications")
         guard panel.runModal() == .OK else { return }
