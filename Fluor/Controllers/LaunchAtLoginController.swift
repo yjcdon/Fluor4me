@@ -3,25 +3,20 @@ import ServiceManagement
 
 @objc(LaunchAtLoginController)
 final class LaunchAtLoginController: NSObject {
-    private static let loginItemDidChange = Notification.Name("Fluor4meLoginItemDidChange")
     private let service = SMAppService.mainApp
 
     override init() {
         super.init()
         NotificationCenter.default.addObserver(
-            self, selector: #selector(refresh(_:)), name: Self.loginItemDidChange, object: nil
-        )
-        NSWorkspace.shared.notificationCenter.addObserver(
-            self, selector: #selector(refresh(_:)), name: NSWorkspace.didActivateApplicationNotification, object: nil
+            self, selector: #selector(refresh(_:)), name: NSApplication.didBecomeActiveNotification, object: nil
         )
     }
 
-    /// Read and update the system setting shared by the menu and preferences.
+    /// Read and update the system login item from General preferences.
     @objc dynamic var launchAtLogin: Bool {
         get { service.status == .enabled }
         set {
             guard newValue != launchAtLogin else { return }
-            defer { NotificationCenter.default.post(name: Self.loginItemDidChange, object: self) }
 
             do {
                 if newValue {
@@ -40,9 +35,8 @@ final class LaunchAtLoginController: NSObject {
         }
     }
 
-    /// Refresh bindings after another control or System Settings changes the service.
+    /// Refresh the checkbox when returning from System Settings.
     @objc private func refresh(_ notification: Notification) {
-        guard (notification.object as? LaunchAtLoginController) !== self else { return }
         willChangeValue(forKey: #keyPath(LaunchAtLoginController.launchAtLogin))
         didChangeValue(forKey: #keyPath(LaunchAtLoginController.launchAtLogin))
     }

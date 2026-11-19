@@ -31,7 +31,6 @@ import Cocoa
 
 final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuControlObserver {
     private let statusMenu = NSMenu()
-    private let loginController = LaunchAtLoginController()
     private var menuItemsController: MenuItemsController!
     let behaviorController = BehaviorController()
 
@@ -42,7 +41,6 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
     
     private lazy var rulesItem = makeItem("Manage rules...", #selector(editRules(_:)), icon: .rules)
     private lazy var runningAppsItem = makeItem("Running applications...", #selector(showRunningApps(_:)), icon: .runningApps)
-    private lazy var loginItem = makeItem("Start Fluor at login", #selector(toggleLaunchAtLogin(_:)))
     private lazy var disabledItem = makeItem("Disabled", #selector(toggleApplicationState(_:)))
 
     private(set) var statusItem: NSStatusItem!
@@ -94,7 +92,6 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
         statusMenu.addItem(runningAppsItem)
         statusMenu.addItem(.separator())
         statusMenu.addItem(makeItem("Preferences...", #selector(showPreferences(_:)), key: ",", icon: .settings))
-        statusMenu.addItem(loginItem)
         statusMenu.addItem(disabledItem)
         statusMenu.addItem(.separator())
         statusMenu.addItem(makeItem("About Fluor4me", #selector(showAbout(_:)), icon: .about))
@@ -123,7 +120,6 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
 
     func menuWillOpen(_ menu: NSMenu) {
         behaviorController.adaptToAccessibilityTrust()
-        loginItem.state = loginController.launchAtLogin ? .on : .off
         refreshManagementItems()
     }
 
@@ -199,12 +195,6 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
         refreshManagementItems()
     }
 
-    /// The operating system remains the source of truth for login registration.
-    @objc private func toggleLaunchAtLogin(_ sender: NSMenuItem) {
-        loginController.launchAtLogin.toggle()
-        sender.state = loginController.launchAtLogin ? .on : .off
-    }
-    
     /// Terminate the application.
     ///
     /// - parameter sender: The object that sent the action.
