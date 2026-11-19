@@ -29,17 +29,11 @@
 /* Class = "NSWindow"; title = "Preferences"; ObjectID = "N9r-FQ-Oq3"; */
 "N9r-FQ-Oq3.title" = "偏好设置";
 
-/* Class = "NSButtonCell"; title = "Automaticaly download updates"; ObjectID = "RZl-MW-RaS"; */
-"RZl-MW-RaS.title" = "自动下载更新";
 
-/* Class = "NSTextFieldCell"; title = "Last Checked:"; ObjectID = "TZA-yl-nGe"; */
-"TZA-yl-nGe.title" = "最后检查时间:";
 
 /* Class = "NSViewController"; title = "Advanced"; ObjectID = "UoT-kw-xfb"; */
 "UoT-kw-xfb.title" = "高级";
 
-/* Class = "NSButtonCell"; title = "Check now"; ObjectID = "Vtq-y9-sm5"; */
-"Vtq-y9-sm5.title" = "立即检查";
 
 /* Class = "NSSegmentedCell"; aHs-kY-jFz.ibShadowedToolTips[0] = "Media keys mode"; ObjectID = "aHs-kY-jFz"; */
 "aHs-kY-jFz.ibShadowedToolTips[0]" = "媒体键模式";
@@ -56,11 +50,7 @@
 /* Class = "NSButtonCell"; title = "Open Notifications preference pane"; ObjectID = "caw-E4-tuY"; */
 "caw-E4-tuY.title" = "打开通知偏好设置";
 
-/* Class = "NSTabViewItem"; label = "Updates"; ObjectID = "dHq-vD-kde"; */
-"dHq-vD-kde.label" = "更新";
 
-/* Class = "NSViewController"; title = "Updates"; ObjectID = "dlC-Ac-YKV"; */
-"dlC-Ac-YKV.title" = "更新";
 
 /* Class = "NSTextFieldCell"; title = "When the current application mode is set by pressing the fn key"; ObjectID = "ezd-7Z-VvY"; */
 "ezd-7Z-VvY.title" = "当按 fn 键切换当前应用模式时";
@@ -107,11 +97,6 @@
 /* Class = "NSTextFieldCell"; title = "Fn key release maximum delay:"; ObjectID = "sJJ-c6-Cuv"; */
 "sJJ-c6-Cuv.title" = "Fn 键释放最大延迟:";
 
-/* Class = "NSTextFieldCell"; title = "Yesterday at 16:28"; ObjectID = "tQx-sm-17A"; */
-"tQx-sm-17A.title" = "昨天 16:28";
 
 /* Class = "NSTextFieldCell"; title = "When the mode changes with the active application"; ObjectID = "tcj-WZ-834"; */
 "tcj-WZ-834.title" = "当模式随活动应用程序而改变时";
-
-/* Class = "NSButtonCell"; title = "Automaticaly check for updates"; ObjectID = "xgt-53-WGT"; */
-"xgt-53-WGT.title" = "自动检查更新";

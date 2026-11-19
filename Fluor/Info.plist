@@ -53,11 +53,5 @@
 	</array>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<false/>
-	<key>SUFeedURL</key>
-	<string>https://updates.pyrolyse.co/Fluor/2.0/appcast.xml</string>
-	<key>SUPublicDSAKeyFile</key>
-	<string>dsa_pub.pem</string>
-	<key>SUPublicEDKey</key>
-	<string>2SzTTYB9kulc+kJ8i0YdyKel2RoNIRKrJ8xp/wXWVyk=</string>
 </dict>
 </plist>

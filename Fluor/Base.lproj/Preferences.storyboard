@@ -39,7 +39,6 @@
                         <tabViewItem label="General" identifier="general_tab" image="NSPreferencesGeneral" id="Hob-Dv-Dm7"/>
                         <tabViewItem label="Notifications" identifier="notification_tab" image="NSInfo" id="hM9-Ia-nxv"/>
                         <tabViewItem label="Advanced" identifier="advanced_tab" image="NSAdvanced" id="18q-Zg-Tl1"/>
-                        <tabViewItem label="Updates" identifier="updates_tab" image="NSNetwork" id="dHq-vD-kde"/>
                     </tabViewItems>
                     <viewControllerTransitionOptions key="transitionOptions" allowUserInteraction="YES"/>
                     <tabView key="tabView" drawsBackground="NO" type="noTabsNoBorder" id="74u-gV-eCB">
@@ -55,7 +54,6 @@
                         <segue destination="bdY-l4-Nw7" kind="relationship" relationship="tabItems" id="vU4-rd-oIX"/>
                         <segue destination="qEK-qg-cnW" kind="relationship" relationship="tabItems" id="R7Y-LJ-AmD"/>
                         <segue destination="UoT-kw-xfb" kind="relationship" relationship="tabItems" id="wRt-Fo-0fY"/>
-                        <segue destination="dlC-Ac-YKV" kind="relationship" relationship="tabItems" id="YgV-xl-9Rw"/>
                     </connections>
                 </tabViewController>
                 <customObject id="N1Y-oQ-rKI" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -220,7 +218,6 @@
                 </viewController>
                 <customObject id="xpC-Av-Pb6" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <customObject id="eCo-0m-X2M" customClass="LaunchAtLoginController"/>
-                <customObject id="YAM-vM-LLT" customClass="SUUpdater"/>
                 <userDefaultsController representsSharedInstance="YES" id="XlE-y8-iHG"/>
             </objects>
             <point key="canvasLocation" x="772" y="96"/>
@@ -401,140 +398,6 @@
                 <userDefaultsController id="fml-C9-lDv"/>
             </objects>
             <point key="canvasLocation" x="772" y="586"/>
-        </scene>
-        <!--Updates-->
-        <scene sceneID="rrS-pL-MCx">
-            <objects>
-                <viewController title="Updates" id="dlC-Ac-YKV" sceneMemberID="viewController">
-                    <view key="view" id="jGP-93-eOQ">
-                        <rect key="frame" x="0.0" y="0.0" width="540" height="114"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <stackView distribution="fill" orientation="vertical" alignment="leading" horizontalStackHuggingPriority="250.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fy6-0l-ufy">
-                                <rect key="frame" x="20" y="20" width="500" height="74"/>
-                                <subviews>
-                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SpF-mM-jPb">
-                                        <rect key="frame" x="-2" y="58" width="504" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Automaticaly check for updates" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="xgt-53-WGT">
-                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <binding destination="AeM-5q-gZ3" name="value" keyPath="self.automaticallyChecksForUpdates" id="zrL-1G-Aec"/>
-                                        </connections>
-                                    </button>
-                                    <stackView distribution="fill" orientation="horizontal" alignment="top" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="750" verticalHuggingPriority="750" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="18z-fd-v5J">
-                                        <rect key="frame" x="0.0" y="38" width="500" height="14"/>
-                                        <subviews>
-                                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="anx-98-FUa">
-                                                <rect key="frame" x="-2" y="-2" width="504" height="18"/>
-                                                <buttonCell key="cell" type="check" title="Automaticaly download updates" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="RZl-MW-RaS">
-                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                    <font key="font" metaFont="system"/>
-                                                </buttonCell>
-                                                <connections>
-                                                    <binding destination="AeM-5q-gZ3" name="value" keyPath="self.automaticallyDownloadsUpdates" id="FMx-vj-v0Z"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                        <visibilityPriorities>
-                                            <integer value="1000"/>
-                                        </visibilityPriorities>
-                                        <customSpacing>
-                                            <real value="3.4028234663852886e+38"/>
-                                        </customSpacing>
-                                    </stackView>
-                                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Yyz-Tu-fIA">
-                                        <rect key="frame" x="0.0" y="27" width="500" height="5"/>
-                                    </box>
-                                    <stackView orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="750" verticalHuggingPriority="750" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rxy-QV-ZxC">
-                                        <rect key="frame" x="0.0" y="0.0" width="500" height="21"/>
-                                        <beginningViews>
-                                            <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="2" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" verticalHuggingPriority="750" fixedFrame="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TRF-Ao-73C">
-                                                <rect key="frame" x="0.0" y="0.0" width="397" height="21"/>
-                                                <subviews>
-                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oN7-9d-NkH">
-                                                        <rect key="frame" x="-2" y="4" width="79" height="14"/>
-                                                        <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Last Checked:" id="TZA-yl-nGe">
-                                                            <font key="font" metaFont="message" size="11"/>
-                                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
-                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                        </textFieldCell>
-                                                    </textField>
-                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5Bm-jK-K96">
-                                                        <rect key="frame" x="75" y="4" width="102" height="14"/>
-                                                        <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Yesterday at 16:28" id="tQx-sm-17A">
-                                                            <dateFormatter key="formatter" dateStyle="medium" timeStyle="short" doesRelativeDateFormatting="YES" id="DX2-WR-kjA"/>
-                                                            <font key="font" metaFont="message" size="11"/>
-                                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
-                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                        </textFieldCell>
-                                                        <connections>
-                                                            <binding destination="AeM-5q-gZ3" name="value" keyPath="self.lastUpdateCheckDate" id="oRH-3d-Kq9"/>
-                                                        </connections>
-                                                    </textField>
-                                                </subviews>
-                                                <visibilityPriorities>
-                                                    <integer value="1000"/>
-                                                    <integer value="1000"/>
-                                                </visibilityPriorities>
-                                                <customSpacing>
-                                                    <real value="3.4028234663852886e+38"/>
-                                                    <real value="3.4028234663852886e+38"/>
-                                                </customSpacing>
-                                            </stackView>
-                                        </beginningViews>
-                                        <endViews>
-                                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="azr-yA-N14">
-                                                <rect key="frame" x="399" y="-7" width="107" height="32"/>
-                                                <buttonCell key="cell" type="push" title="Check now" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Vtq-y9-sm5">
-                                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                    <font key="font" metaFont="system"/>
-                                                </buttonCell>
-                                                <connections>
-                                                    <action selector="checkForUpdates:" target="AeM-5q-gZ3" id="TnE-0H-iGT"/>
-                                                </connections>
-                                            </button>
-                                        </endViews>
-                                        <visibilityPriorities>
-                                            <integer value="1000"/>
-                                            <integer value="1000"/>
-                                        </visibilityPriorities>
-                                        <customSpacing>
-                                            <real value="3.4028234663852886e+38"/>
-                                            <real value="3.4028234663852886e+38"/>
-                                        </customSpacing>
-                                    </stackView>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="500" id="UMU-Cy-HRA"/>
-                                </constraints>
-                                <visibilityPriorities>
-                                    <integer value="1000"/>
-                                    <integer value="1000"/>
-                                    <integer value="1000"/>
-                                    <integer value="1000"/>
-                                </visibilityPriorities>
-                                <customSpacing>
-                                    <real value="3.4028234663852886e+38"/>
-                                    <real value="3.4028234663852886e+38"/>
-                                    <real value="3.4028234663852886e+38"/>
-                                    <real value="3.4028234663852886e+38"/>
-                                </customSpacing>
-                            </stackView>
-                        </subviews>
-                        <constraints>
-                            <constraint firstItem="fy6-0l-ufy" firstAttribute="top" secondItem="jGP-93-eOQ" secondAttribute="top" constant="20" symbolic="YES" id="41j-He-rq9"/>
-                            <constraint firstAttribute="trailing" secondItem="fy6-0l-ufy" secondAttribute="trailing" constant="20" symbolic="YES" id="RyH-uf-dvh"/>
-                            <constraint firstAttribute="bottom" secondItem="fy6-0l-ufy" secondAttribute="bottom" constant="20" symbolic="YES" id="WOd-BE-mZN"/>
-                            <constraint firstItem="fy6-0l-ufy" firstAttribute="leading" secondItem="jGP-93-eOQ" secondAttribute="leading" constant="20" symbolic="YES" id="YaT-cM-Xk9"/>
-                        </constraints>
-                    </view>
-                </viewController>
-                <customObject id="uno-mT-3BM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <customObject id="AeM-5q-gZ3" customClass="SUUpdater"/>
-            </objects>
-            <point key="canvasLocation" x="772" y="783"/>
         </scene>
         <!--User Notification Enablement View Controller-->
         <scene sceneID="0q3-2b-oin">
@@ -871,7 +734,6 @@
         <image name="AppleMode" width="16" height="16"/>
         <image name="NSAdvanced" width="32" height="32"/>
         <image name="NSInfo" width="32" height="32"/>
-        <image name="NSNetwork" width="32" height="32"/>
         <image name="NSPreferencesGeneral" width="32" height="32"/>
         <image name="OtherMode" width="16" height="16"/>
     </resources>

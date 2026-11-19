@@ -36,9 +36,8 @@ Accessibility settings if macOS rejects the previous authorization.
 
 ## Build from source
 
-Put [Sparkle 1.27.3](https://github.com/sparkle-project/Sparkle/releases/tag/1.27.3)'s
-`Sparkle.framework` in the `Fluor` source directory, open `Fluor.xcodeproj` in
-Xcode, select your signing identity, and build the Fluor scheme.
+Open `Fluor.xcodeproj` in Xcode, select your signing identity, and build the
+Fluor scheme. Xcode resolves the Swift package dependencies.
 
 # Upstream Fluor documentation
 

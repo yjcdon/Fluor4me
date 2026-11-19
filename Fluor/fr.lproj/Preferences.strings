@@ -25,11 +25,7 @@
 /* Class = "NSButtonCell"; title = "Restore startup mode"; ObjectID = "cXi-qe-jsD"; */
 "cXi-qe-jsD.title" = "Restaurer l'état d'avant le lancement de l'application";
 
-/* Class = "NSTabViewItem"; label = "Updates"; ObjectID = "dHq-vD-kde"; */
-"dHq-vD-kde.label" = "Mises à jour";
 
-/* Class = "NSViewController"; title = "Updates"; ObjectID = "dlC-Ac-YKV"; */
-"dlC-Ac-YKV.title" = "Mises à jour";
 
 /* Class = "NSTextFieldCell"; title = "Default mode on launch"; ObjectID = "F4H-9X-Gkc"; */
 "F4H-9X-Gkc.title" = "Mode par défaut au lancement";
@@ -91,27 +87,15 @@
 /* Class = "NSButtonCell"; title = "Hide the trigger method selection section"; ObjectID = "qxq-5O-b7c"; */
 "qxq-5O-b7c.title" = "Cacher la section Déclencheur";
 
-/* Class = "NSButtonCell"; title = "Automaticaly download updates"; ObjectID = "RZl-MW-RaS"; */
-"RZl-MW-RaS.title" = "Téléchargement automatique des mises à jour";
 
 /* Class = "NSTextFieldCell"; title = "Fn key release maximum delay:"; ObjectID = "sJJ-c6-Cuv"; */
 "sJJ-c6-Cuv.title" = "Durée maximum de la pression de la touche Fn:";
 
-/* Class = "NSTextFieldCell"; title = "Yesterday at 16:28"; ObjectID = "tQx-sm-17A"; */
-"tQx-sm-17A.title" = "Yesterday at 16:28";
 
-/* Class = "NSTextFieldCell"; title = "Last Checked:"; ObjectID = "TZA-yl-nGe"; */
-"TZA-yl-nGe.title" = "Dernière vérification:";
 
 /* Class = "NSViewController"; title = "Advanced"; ObjectID = "UoT-kw-xfb"; */
 "UoT-kw-xfb.title" = "Avancé";
 
-/* Class = "NSButtonCell"; title = "Check now"; ObjectID = "Vtq-y9-sm5"; */
-"Vtq-y9-sm5.title" = "Vérifier maintenant";
 
 /* Class = "NSButtonCell"; title = "When the mode changes with the active application"; ObjectID = "x50-mP-zRP"; */
 "tcj-WZ-834.title" = "Lorsque le mode change avec l'application active";
-
-/* Class = "NSButtonCell"; title = "Automaticaly check for updates"; ObjectID = "xgt-53-WGT"; */
-"xgt-53-WGT.title" = "Vérification automatique des mises à jour";
-
