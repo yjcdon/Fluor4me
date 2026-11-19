@@ -27,109 +27,93 @@
 //
 
 
-import Cocoa
+import AppKit
+import UniformTypeIdentifiers
 
-class RulesEditorViewController: NSViewController, BehaviorDidChangeObserver {
-    @IBOutlet weak var tableView: NSTableView!
-    @IBOutlet var itemsArrayController: NSArrayController!
-    @IBOutlet weak var contentActionSegmentedControl: NSSegmentedControl!
-    
-    @objc dynamic var rulesSet = Set<Rule>()
-    
-    @objc dynamic var searchPredicate: NSPredicate?
-    @objc dynamic var sortDescriptors: [NSSortDescriptor] = [.init(key: "name", ascending: true, selector: #selector(NSString.caseInsensitiveCompare(_:)))]
-    
-    private var tableContentAnimator: TableViewContentAnimator<Rule>!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        self.startObservingBehaviorDidChange()
-        itemsArrayController.addObserver(self, forKeyPath: "canRemove", options: [], context: nil)
-        itemsArrayController.addObserver(self, forKeyPath: "canAdd", options: [], context: nil)
-        
-        self.rulesSet = AppManager.default.rules
-        
-        self.tableContentAnimator = TableViewContentAnimator(tableView: tableView, arrayController: itemsArrayController)
+final class RulesEditorViewController: NSViewController, NSTableViewDelegate, BehaviorDidChangeObserver {
+    private let itemsArrayController = NSArrayController(content: [])
+    private var tableContentAnimator: TableViewContentAnimator<Rule>?
+
+    override func loadView() {
+        let addTitle = NSLocalizedString("Add rule", comment: "")
+        let removeTitle = NSLocalizedString("Delete selected rule", comment: "")
+        let addButton = NSButton(image: NSImage(named: NSImage.addTemplateName) ?? NSImage(),
+                                 target: self, action: #selector(addRule))
+        let removeButton = NSButton(image: NSImage(named: NSImage.removeTemplateName) ?? NSImage(),
+                                    target: self, action: #selector(removeRule))
+        addButton.toolTip = addTitle
+        addButton.setAccessibilityLabel(addTitle)
+        removeButton.toolTip = removeTitle
+        removeButton.setAccessibilityLabel(removeTitle)
+
+        let list = ApplicationListView(controls: [addButton, removeButton])
+        view = list
+        list.searchField.target = self
+        list.searchField.action = #selector(filterRules(_:))
+        list.tableView.delegate = self
+        list.tableView.bind(.selectionIndexes, to: itemsArrayController, withKeyPath: "selectionIndexes")
+        removeButton.bind(.enabled, to: itemsArrayController, withKeyPath: "canRemove")
+        list.countLabel.bind(NSBindingName("displayPatternValue1"), to: itemsArrayController,
+                             withKeyPath: "arrangedObjects.@count", options: [
+            .displayPattern: NSLocalizedString("%{value1}@ rules", comment: "")
+        ])
+
+        itemsArrayController.sortDescriptors = [
+            NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.caseInsensitiveCompare(_:)))
+        ]
+        itemsArrayController.content = Array(AppManager.default.rules)
+        tableContentAnimator = TableViewContentAnimator(tableView: list.tableView, arrayController: itemsArrayController)
+        startObservingBehaviorDidChange()
     }
-    
+
     deinit {
         stopObservingBehaviorDidChange()
-        itemsArrayController.removeObserver(self, forKeyPath: "canRemove")
-        itemsArrayController.removeObserver(self, forKeyPath: "canAdd")
+        tableContentAnimator = nil
     }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        guard (object as? NSArrayController) ==  itemsArrayController, let keyPath = keyPath else { return }
-        switch keyPath {
-        case "canAdd":
-            contentActionSegmentedControl.setEnabled(itemsArrayController.canAdd, forSegment: 0)
-        case "canRemove":
-            contentActionSegmentedControl.setEnabled(itemsArrayController.canRemove, forSegment: 1)
-        default:
-            return
-        }
+
+    /// Use the sorted, filtered rules to populate reusable table rows.
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        guard let rules = itemsArrayController.arrangedObjects as? [Rule] else { return nil }
+        let cell = tableView.makeView(withIdentifier: RuleCellView.cellIdentifier, owner: nil) as? RuleCellView
+            ?? RuleCellView(allowsDefault: false)
+        cell.display(rules[row])
+        return cell
     }
-    
-    // MARK: - BehaviorDidChangeObserver
-    
-    /// Called when a rule change for an application.
-    ///
-    /// - parameter notification: The notification.
+
+    /// Reload from the saved rules after any of the app's rule controls changes a behavior.
     func behaviorDidChangeForApp(notification: Notification) {
-        guard let userInfo = notification.userInfo as? [String: Any], userInfo["source"] as? NotificationSource != .rule else { return }
-        guard let id = userInfo["id"] as? String, let behavior = userInfo["behavior"] as? AppBehavior, let url = userInfo["url"] as? URL else { return }
-        if let item = rulesSet.first(where: { $0.id == id }) {
-            if case .inferred = behavior {
-                itemsArrayController.removeObject(item)
-            } else {
-                item.behavior = behavior
-            }
-        } else if behavior != .inferred {
-            let item = Rule(id: id, url: url, behavior: behavior)
-            rulesSet.insert(item)
+        itemsArrayController.content = Array(AppManager.default.rules)
+    }
+
+    /// Filter the current list without changing the saved rules.
+    @objc private func filterRules(_ sender: NSSearchField) {
+        itemsArrayController.filterPredicate = sender.stringValue.isEmpty
+            ? nil
+            : NSPredicate(format: "name CONTAINS[cd] %@", sender.stringValue)
+    }
+
+    /// Add rules for the applications selected in the open panel.
+    @objc private func addRule() {
+        let panel = NSOpenPanel()
+        panel.allowsMultipleSelection = true
+        panel.allowedContentTypes = [.bundle]
+        panel.canChooseDirectories = false
+        panel.directoryURL = URL(fileURLWithPath: "/Applications")
+        guard panel.runModal() == .OK else { return }
+
+        let manager = AppManager.default
+        for url in panel.urls {
+            guard let id = Bundle(url: url)?.bundleIdentifier else { continue }
+            let ruleURL = manager.rules.first { $0.id == id }?.url ?? url
+            manager.propagate(behavior: .media, forApp: id, at: ruleURL, from: .rule)
         }
     }
-    
-    // MARK: - Private functions
-    
-    /// Add a rule for an application.
-    private func addRule() {
-        let openPanel = NSOpenPanel()
-        openPanel.allowsMultipleSelection = true
-        openPanel.allowedFileTypes = ["com.apple.bundle"]
-        openPanel.canChooseDirectories = false
-        openPanel.directoryURL = URL(fileURLWithPath: "/Applications")
-        openPanel.runModal()
-        let items = openPanel.urls.map { (url) -> Rule in
-            let bundle = Bundle(url: url)!
-            let id = bundle.bundleIdentifier!
-            
-            AppManager.default.propagate(behavior: .media, forApp: id, at: url, from: .rule)
-            return Rule(id: id, url: url, behavior: .media)
-        }
-        rulesSet.formUnion(items)
-    }
-    
-    /// Remove a rule for a given application.
-    private func removeRule() {
-        guard let items = itemsArrayController.selectedObjects as? [Rule] else { return }
-        items.forEach { (item) in
-            AppManager.default.propagate(behavior: .inferred, forApp: item.id, at: item.url, from: .rule)
-        }
-        itemsArrayController.remove(self)
-    }
-    
-    // MARK: - Actions
-    
-    @IBAction func operateRuleCollection(_ sender: NSSegmentedControl) {
-        switch sender.selectedSegment {
-        case 0:
-            self.addRule()
-        default:
-            self.removeRule()
+
+    /// Remove the selected rule by returning it to the global default.
+    @objc private func removeRule() {
+        guard let rules = itemsArrayController.selectedObjects as? [Rule] else { return }
+        for rule in rules {
+            AppManager.default.propagate(behavior: .inferred, forApp: rule.id, at: rule.url, from: .rule)
         }
     }
-    
-    
 }

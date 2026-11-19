@@ -27,18 +27,21 @@
 //
 
 
-import Cocoa
+import AppKit
 
-final class RulesEditorWindowController: NSWindowController, StoryboardInstantiable {
-    static let storyboardName: NSStoryboard.Name = .rulesEditor
-    
-    @IBAction func filterRuleList(_ sender: NSSearchField) {
-        let searchString = sender.stringValue
-        if searchString != "" {
-            let predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchString)
-            (self.contentViewController as? RulesEditorViewController)?.searchPredicate = predicate
-        } else {
-            (self.contentViewController as? RulesEditorViewController)?.searchPredicate = nil
-        }
+final class RulesEditorWindowController: NSWindowController {
+    /// Create the rules window with a native, searchable list.
+    static func instantiate() -> RulesEditorWindowController {
+        let window = NSPanel(
+            contentRect: NSRect(x: 0, y: 0, width: 360, height: 480),
+            styleMask: [.titled, .closable, .resizable], backing: .buffered, defer: false
+        )
+        window.title = NSLocalizedString("Rules", comment: "")
+        window.contentViewController = RulesEditorViewController()
+        window.contentMinSize = NSSize(width: 340, height: 240)
+        window.isReleasedWhenClosed = false
+        window.center()
+        window.setFrameAutosaveName("Fluor_EditRulesWindowAutosaveName")
+        return RulesEditorWindowController(window: window)
     }
 }

@@ -27,85 +27,97 @@
 //
 
 
-import Cocoa
+import AppKit
 
-class RunningAppsViewController: NSViewController, NSTableViewDelegate {
-    @IBOutlet weak var tableView: NSTableView!
-    @IBOutlet var itemsArrayController: NSArrayController!
-    
-    @objc dynamic var runningAppsArray = [RunningApp]()
-    @objc dynamic var showAll: Bool = AppManager.default.showAllRunningProcesses {
-        didSet { self.reloadData() }
+final class RunningAppsViewController: NSViewController, NSTableViewDelegate {
+    private let itemsArrayController = NSArrayController(content: [])
+    private var tableContentAnimator: TableViewContentAnimator<RunningApp>?
+    private var runningApps: [RunningApp] = [] {
+        didSet { itemsArrayController.content = runningApps }
     }
-    @objc dynamic var searchPredicate: NSPredicate?
-    @objc dynamic var sortDescriptors: [NSSortDescriptor] = [.init(key: "name", ascending: true, selector: #selector(NSString.caseInsensitiveCompare(_:)))]
-    
-    private var tableContentAnimator: TableViewContentAnimator<RunningApp>!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        self.tableContentAnimator = TableViewContentAnimator(tableView: tableView, arrayController: itemsArrayController)
-        self.tableContentAnimator.performUnanimated {
-            self.reloadData()
-        }
-        
-        self.applyAsObserver()
+    private var showAll = AppManager.default.showAllRunningProcesses
+
+    override func loadView() {
+        let showAllButton = NSButton(title: showAllTitle, target: self, action: #selector(toggleShowAll(_:)))
+        let list = ApplicationListView(controls: [showAllButton])
+        view = list
+        list.searchField.target = self
+        list.searchField.action = #selector(filterApps(_:))
+        list.tableView.delegate = self
+        list.countLabel.bind(NSBindingName("displayPatternValue1"), to: itemsArrayController,
+                             withKeyPath: "arrangedObjects.@count", options: [
+            .displayPattern: NSLocalizedString("%{value1}@ running", comment: "")
+        ])
+
+        itemsArrayController.sortDescriptors = [
+            NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.caseInsensitiveCompare(_:)))
+        ]
+        reloadData()
+        tableContentAnimator = TableViewContentAnimator(tableView: list.tableView, arrayController: itemsArrayController)
+        let notifications = NSWorkspace.shared.notificationCenter
+        notifications.addObserver(self, selector: #selector(appDidLaunch(_:)), name: NSWorkspace.didLaunchApplicationNotification, object: nil)
+        notifications.addObserver(self, selector: #selector(appDidTerminate(_:)), name: NSWorkspace.didTerminateApplicationNotification, object: nil)
     }
-    
+
     deinit {
         NSWorkspace.shared.notificationCenter.removeObserver(self)
-    }
-    
-    /// Called whenever an application is launched by the system or the user.
-    ///
-    /// - parameter notification: The notification.
-    @objc private func appDidLaunch(notification: Notification) {
-        guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
-            let id = app.bundleIdentifier ?? app.executableURL?.lastPathComponent,
-            let url = app.bundleURL ?? app.executableURL else { return }
-        let isApp = app.activationPolicy == .regular
-        guard self.showAll || isApp else { return }
-        let behavior = AppManager.default.behaviorForApp(id: id)
-        let item = RunningApp(id: id, url: url, behavior: behavior, pid: app.processIdentifier, isApp: isApp)
-        
-        self.runningAppsArray.append(item)
-    }
-    
-    /// Called whenever an application is terminated by the system or the user.
-    ///
-    /// - parameter notification: The notification.
-    @objc private func appDidTerminate(notification: Notification) {
-        guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
-            let item = runningAppsArray.first(where: { $0.pid == app.processIdentifier }), let index = runningAppsArray.firstIndex(of: item) else { return }
-        self.runningAppsArray.remove(at: index)
-    }
-    
-    /// Set `self` as an observer for *launch* and *terminate* notfications.
-    private func applyAsObserver() {
-        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(appDidLaunch(notification:)), name: NSWorkspace.didLaunchApplicationNotification, object: nil)
-        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(appDidTerminate(notification:)), name: NSWorkspace.didTerminateApplicationNotification, object: nil)
-    }
-    
-    /// Load all running applications and populate the table view with corresponding data.
-    private func reloadData() {
-        self.runningAppsArray = self.getRunningApps()
+        tableContentAnimator = nil
     }
 
-    private func getRunningApps() -> [RunningApp] {
-        return NSWorkspace.shared.runningApplications.compactMap { (app) -> RunningApp? in
-            guard let id = app.bundleIdentifier ?? app.executableURL?.lastPathComponent, let url = app.bundleURL ?? app.executableURL else { return nil }
-            let isApp = app.activationPolicy == .regular
-            guard showAll || isApp else { return nil }
-            
-            let behavior = AppManager.default.behaviorForApp(id: id)
-            let pid = app.processIdentifier
-            
-            return RunningApp(id: id, url: url, behavior: behavior, pid: pid, isApp: isApp)
-        }
+    private var showAllTitle: String {
+        showAll ? NSLocalizedString("Hide services", comment: "") : NSLocalizedString("Show all", comment: "")
     }
-    
-    // MARK: - Table View Delegate
-    
+
+    /// Show apps and background services or restrict the list to regular apps.
+    @objc private func toggleShowAll(_ sender: NSButton) {
+        showAll.toggle()
+        sender.title = showAllTitle
+        reloadData()
+    }
+
+    /// Filter the running-app list by its displayed names.
+    @objc private func filterApps(_ sender: NSSearchField) {
+        itemsArrayController.filterPredicate = sender.stringValue.isEmpty
+            ? nil
+            : NSPredicate(format: "name CONTAINS[cd] %@", sender.stringValue)
+    }
+
+    /// Include newly launched apps that match the current display option.
+    @objc private func appDidLaunch(_ notification: Notification) {
+        guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+              let item = makeRunningApp(app) else { return }
+        runningApps.append(item)
+    }
+
+    /// Drop exited processes from the running list.
+    @objc private func appDidTerminate(_ notification: Notification) {
+        guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+              let index = runningApps.firstIndex(where: { $0.pid == app.processIdentifier }) else { return }
+        runningApps.remove(at: index)
+    }
+
+    /// Refresh the list from the workspace using the current app/service filter.
+    private func reloadData() {
+        runningApps = NSWorkspace.shared.runningApplications.compactMap(makeRunningApp(_:))
+    }
+
+    private func makeRunningApp(_ app: NSRunningApplication) -> RunningApp? {
+        guard let id = app.bundleIdentifier ?? app.executableURL?.lastPathComponent,
+              let url = app.bundleURL ?? app.executableURL else { return nil }
+        let isApp = app.activationPolicy == .regular
+        guard showAll || isApp else { return nil }
+        let behavior = AppManager.default.behaviorForApp(id: id)
+        return RunningApp(id: id, url: url, behavior: behavior, pid: app.processIdentifier, isApp: isApp)
+    }
+
+    /// Populate a row that can change the app's rule without selecting the row.
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        guard let apps = itemsArrayController.arrangedObjects as? [RunningApp] else { return nil }
+        let cell = tableView.makeView(withIdentifier: RuleCellView.cellIdentifier, owner: nil) as? RuleCellView
+            ?? RuleCellView(allowsDefault: true)
+        cell.display(apps[row])
+        return cell
+    }
+
     func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool { false }
 }

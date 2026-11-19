@@ -29,23 +29,96 @@
 
 import Cocoa
 
-class RuleCellView: NSTableCellView {
-    override var backgroundStyle: NSView.BackgroundStyle {
-        didSet {
-            switch self.backgroundStyle {
-            case .light:
-                self.textField?.textColor = .textColor
-            default:
-                self.textField?.textColor = .selectedMenuItemTextColor
+final class RuleCellView: NSTableCellView {
+    static let cellIdentifier = NSUserInterfaceItemIdentifier("ApplicationCell")
+
+    private let modeControl = NSSegmentedControl()
+    private let kindImageView = NSImageView()
+    private let behaviors: [AppBehavior]
+    private var behaviorObservation: NSKeyValueObservation?
+
+    /// Show an app icon, name and its allowed keyboard modes.
+    init(allowsDefault: Bool) {
+        behaviors = allowsDefault ? [.inferred, .media, .function] : [.media, .function]
+        super.init(frame: .zero)
+        identifier = Self.cellIdentifier
+
+        let icon = NSImageView()
+        icon.imageScaling = .scaleProportionallyUpOrDown
+        imageView = icon
+        let name = NSTextField(labelWithString: "")
+        name.lineBreakMode = .byTruncatingTail
+        textField = name
+        name.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
+        modeControl.segmentCount = behaviors.count
+        modeControl.trackingMode = .selectOne
+        modeControl.target = self
+        modeControl.action = #selector(changeMode(_:))
+        for (index, behavior) in behaviors.enumerated() {
+            let imageName: String
+            switch behavior {
+            case .inferred: imageName = "DefaultMode"
+            case .media: imageName = "AppleMode"
+            case .function: imageName = "OtherMode"
             }
+            if let image = FluorImage.named(imageName) {
+                modeControl.setImage(image, forSegment: index)
+            } else {
+                modeControl.setLabel(behavior.label, forSegment: index)
+            }
+            modeControl.setToolTip(behavior.label, forSegment: index)
+        }
+        modeControl.setContentCompressionResistancePriority(.required, for: .horizontal)
+
+        var views: [NSView] = [icon, name, modeControl]
+        if allowsDefault { views.append(kindImageView) }
+        let row = NSStackView(views: views)
+        row.alignment = .centerY
+        row.spacing = 8
+        row.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(row)
+        NSLayoutConstraint.activate([
+            row.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
+            row.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
+            row.centerYAnchor.constraint(equalTo: centerYAnchor),
+            icon.widthAnchor.constraint(equalToConstant: 32),
+            icon.heightAnchor.constraint(equalTo: icon.widthAnchor)
+        ])
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    /// Refresh a reused row and track edits from the other rule entry points.
+    func display(_ item: Item) {
+        objectValue = item
+        imageView?.image = item.icon
+        toolTip = item.url.path
+        textField?.stringValue = item.name
+        if let runningApp = item as? RunningApp {
+            kindImageView.image = FluorImage.named(runningApp.isApp ? "App" : "Service")
+        }
+        modeControl.selectedSegment = behaviors.firstIndex(of: item.behavior) ?? -1
+        behaviorObservation = item.observe(\.behavior) { [weak self] item, _ in
+            guard let self else { return }
+            self.modeControl.selectedSegment = self.behaviors.firstIndex(of: item.behavior) ?? -1
         }
     }
-    
-    @IBAction func action(_ sender: Any?) {
-        guard let item = objectValue as? Item else {
-            return AppErrorManager.showError(withReason: "Can't set behavior")
+
+    override var backgroundStyle: NSView.BackgroundStyle {
+        didSet {
+            textField?.textColor = backgroundStyle == .emphasized ? .selectedMenuItemTextColor : .textColor
         }
-        
-        AppManager.default.propagate(behavior: item.behavior, forApp: item.id, at: item.url, from: item.notificationSource)
+    }
+
+    /// Apply the selection through the same rules store as the menu.
+    @objc private func changeMode(_ sender: NSSegmentedControl) {
+        guard let item = objectValue as? Item, behaviors.indices.contains(sender.selectedSegment) else { return }
+        let behavior = behaviors[sender.selectedSegment]
+        guard item.behavior != behavior else { return }
+        let url = AppManager.default.rules.first { $0.id == item.id }?.url ?? item.url
+        AppManager.default.propagate(behavior: behavior, forApp: item.id, at: url, from: item.notificationSource)
     }
 }
