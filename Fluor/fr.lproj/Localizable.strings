@@ -15,3 +15,40 @@
 
 /* Application version and build number in About. */
 "Version %@ build %@" = "Version %@ (build %@)";
+
+"%{value1}@ rules" = "%{value1}@ règles";
+"%{value1}@ running" = "%{value1}@ en cours d'exécution";
+"About Fluor4me" = "À propos de Fluor4me";
+"Add rule" = "Ajouter une règle";
+"Advanced" = "Avancé";
+"Always show all running processes" = "Toujours montrer tous les processus";
+"An app" = "Application";
+"Ask permission" = "Gérer permission";
+"Change mode with the active application" = "Bascule le mode en fonction de l'application active";
+"Copyright (c) 2016 Pierre Tacchi" = "Copyright (c) 2016 Pierre Tacchi";
+"Current application" = "Application active";
+"Default mode" = "Mode par défaut";
+"Default mode on launch" = "Mode par défaut au lancement";
+"Delete selected rule" = "Supprimer la règle selectionnée";
+"Disabled" = "Désactivé";
+"Fluor4me on GitHub" = "Fluor4me sur GitHub";
+"Fn key release maximum delay" = "Durée maximum de la pression de la touche Fn";
+"General" = "Général";
+"Hide services" = "Cacher les services";
+"Hide the trigger method selection section" = "Cacher la section Déclencheur";
+"Manage rules..." = "Gérer les règles...";
+"Preferences" = "Préférences";
+"Preferences..." = "Préférences...";
+"Quit" = "Quitter";
+"Reset mode on quit" = "Réinitialiser le mode quand l'application termine";
+"Restore startup mode" = "Restaurer l'état d'avant le lancement de l'application";
+"Rules" = "Règles";
+"Running Applications" = "Applications en cours";
+"Running applications..." = "Applications en cours...";
+"Search" = "Rechercher";
+"Set mode for the active application when the fn key is pressed" = "Bascule le mode quand la touche Fn est pressée";
+"Set the default mode when the fn key is pressed" = "Modifie le mode par défaut lors d'un appui sur le touche fn";
+"Show all" = "Montrer tout";
+"Start Fluor at login" = "Lancer Fluor au démarrage";
+"Switch method" = "Mode de déclenchement";
+"Trigger" = "Déclencheur";
