@@ -43,10 +43,6 @@ extension UserDefaultsKeyName {
     static let showAllRunningProcesses: UserDefaultsKeyName = "ShowAllProcesses"
     static let fnKeyMaximumDelay: UserDefaultsKeyName = "FNKeyReleaseMaximumDelay"
     static let hideSwitchMethod: UserDefaultsKeyName = "HideSwitchMethod"
-    static let sendFnKeyNotification: UserDefaultsKeyName = "sendFnKeyNotification"
-    static let hideNotificationAuthorizationPopup: UserDefaultsKeyName = "hideNotificationAuthorizationPopup"
-    static let userNotificationEnablement: UserDefaultsKeyName = "userNotificationEnablement"
-    static let sendLegacyUserNotifications: UserDefaultsKeyName = "sendLegacyUserNotification"
 }
 
 /// This class holds all per-application keyboard behaviors.
@@ -88,18 +84,6 @@ class AppManager: BehaviorDidChangePoster {
     
     @Defaults(key: .fnKeyMaximumDelay, defaultValue: 280)
     var fnKeyMaximumDelay: TimeInterval
-    
-    @Defaults(key: .hideNotificationAuthorizationPopup, defaultValue: false)
-    var hideNotificationAuthorizationPopup: Bool
-    
-    @Defaults(key: .sendFnKeyNotification, defaultValue: true)
-    var sendFnKeyNotification: Bool
-    
-    @Defaults(key: .userNotificationEnablement, defaultValue: .none)
-    var userNotificationEnablement: UserNotificationEnablement
-    
-    @Defaults(key: .sendLegacyUserNotifications, defaultValue: false)
-    var sendLegacyUserNotifications: Bool
     
     private(set) var rules: Set<Rule> = []
     private var behaviorDict: [String: AppBehavior] = [:]

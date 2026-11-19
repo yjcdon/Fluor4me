@@ -31,7 +31,6 @@
 
 import Cocoa
 import os.log
-import UserNotifications
 
 class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewControllerDelegate, SwitchMethodDidChangeObserver, ActiveApplicationDidChangeObserver {
     @IBOutlet weak var statusMenuController: StatusMenuController!
@@ -49,7 +48,6 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
     private var onLaunchKeyboardMode: FKeyMode = .media
     private var currentAppID: String = ""
     private var currentAppURL: URL?
-    private var currentAppName: String?
     private var currentBehavior: AppBehavior = .inferred
     private var switchMethod: SwitchMethod = .window
     
@@ -120,7 +118,6 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
 
     private func updateActiveApplication(_ app: NSRunningApplication) {
         guard let id = app.bundleIdentifier ?? app.executableURL?.lastPathComponent else { return }
-        self.currentAppName = app.localizedName
         self.currentAppID = id
         self.currentAppURL = app.bundleURL
         if !AppManager.default.isDisabled {
@@ -253,8 +250,6 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
             NSLog("Switch to Other Mode for %@", self.currentAppID)
             self.statusMenuController.statusItem.image = AppManager.default.useLightIcon ? #imageLiteral(resourceName: "OtherMode") : #imageLiteral(resourceName: "IconOtherMode")
         }
-        
-        UserNotificationHelper.sendModeChangedTo(mode)
     }
     
     private func manageKeyPress(event: NSEvent) {
@@ -293,10 +288,8 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
     private func fnKeyPressedImpactsGlobal() {
         let mode = self.currentMode.counterPart
         AppManager.default.defaultFKeyMode = mode
-        UserNotificationHelper.holdNextModeChangedNotification = true
         self.changeKeyboard(mode: mode)
         self.currentMode = mode
-        UserNotificationHelper.sendGlobalModeChangedTo(mode)
     }
     
     private func fnKeyPressedImpactsApp() {
@@ -317,11 +310,7 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
             newAppBehavior = .inferred
         }
         
-        UserNotificationHelper.holdNextModeChangedNotification = self.currentAppName != nil
         AppManager.default.propagate(behavior: newAppBehavior, forApp: self.currentAppID , at: url, from: .fnKey)
-        if let name = self.currentAppName {
-            UserNotificationHelper.sendFKeyChangedAppBehaviorTo(newAppBehavior, appName: name)
-        }
     }
     
     private func ensureMonitoringFlagKey() {

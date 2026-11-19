@@ -48,8 +48,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             AppManager.default.hasAlreadyAnsweredAccessibility = true
         }
         
-        UserNotificationHelper.askUserAtLaunch()
-        
         self.loadMainMenu()
     }
     

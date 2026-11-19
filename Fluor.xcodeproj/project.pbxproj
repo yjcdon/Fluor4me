@@ -14,11 +14,7 @@
 		3F16ECDD23E9D1AC008BC89A /* DefaultsWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = 3F16ECDC23E9D1AC008BC89A /* DefaultsWrapper */; };
 		3F16ECDF23EC459F008BC89A /* ResultExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F16ECDE23EC459F008BC89A /* ResultExtension.swift */; };
 		3F16ECE123EDDF66008BC89A /* SetExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F16ECE023EDDF66008BC89A /* SetExtension.swift */; };
-		3F244071245D73180061960A /* UserNotificationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F244070245D73180061960A /* UserNotificationHelper.swift */; };
 		3F2571F41FDBD43500020194 /* TableViewContentAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2571F31FDBD43500020194 /* TableViewContentAnimator.swift */; };
-		3F266BA1246489D70005395F /* MultilinesCheckBoxLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F266BA0246489D70005395F /* MultilinesCheckBoxLabel.swift */; };
-		3F2CAE6A246038E30046D711 /* UserNotificationEnablementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2CAE69246038E30046D711 /* UserNotificationEnablementViewController.swift */; };
-		3F2CAE6C246438590046D711 /* LinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2CAE6B246438590046D711 /* LinkButton.swift */; };
 		3F2FA3FF1D79D094003E2AD8 /* StatusMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2FA3FE1D79D094003E2AD8 /* StatusMenuController.swift */; };
 		3F2FA4011D79D66D003E2AD8 /* DefaultModeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2FA4001D79D66D003E2AD8 /* DefaultModeViewController.swift */; };
 		3F2FA4031D7A059F003E2AD8 /* CurrentAppViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2FA4021D7A059F003E2AD8 /* CurrentAppViewController.swift */; };
@@ -54,7 +50,6 @@
 		3FE784DD2052F591007F6200 /* NSViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE784DC2052F591007F6200 /* NSViewExtension.swift */; };
 		3FE784E12053D455007F6200 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3FE784E02053D455007F6200 /* README.md */; };
 		3FE7B6C9245DC6180027DB39 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3FE7B6CB245DC6180027DB39 /* Localizable.strings */; };
-		3FE7B6DB245DF8450027DB39 /* SmoothOperators in Frameworks */ = {isa = PBXBuildFile; productRef = 3FE7B6DA245DF8450027DB39 /* SmoothOperators */; };
 		3FE7E0E01D7CA14600DC754D /* LaunchAtLoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FE7E0DF1D7CA14600DC754D /* LaunchAtLoginController.m */; };
 		3FE7E0E31D7CBE1700DC754D /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE7E0E11D7CBE1700DC754D /* AboutWindowController.swift */; };
 		3FE7E0EA1D7CC01B00DC754D /* RulesEditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE7E0E81D7CC01B00DC754D /* RulesEditorWindowController.swift */; };
@@ -75,11 +70,7 @@
 		3F15629B23FE892A00CD0773 /* MoverImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoverImageView.swift; sourceTree = "<group>"; };
 		3F16ECDE23EC459F008BC89A /* ResultExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultExtension.swift; sourceTree = "<group>"; };
 		3F16ECE023EDDF66008BC89A /* SetExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetExtension.swift; sourceTree = "<group>"; };
-		3F244070245D73180061960A /* UserNotificationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationHelper.swift; sourceTree = "<group>"; };
 		3F2571F31FDBD43500020194 /* TableViewContentAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewContentAnimator.swift; sourceTree = "<group>"; };
-		3F266BA0246489D70005395F /* MultilinesCheckBoxLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilinesCheckBoxLabel.swift; sourceTree = "<group>"; };
-		3F2CAE69246038E30046D711 /* UserNotificationEnablementViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationEnablementViewController.swift; sourceTree = "<group>"; };
-		3F2CAE6B246438590046D711 /* LinkButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkButton.swift; sourceTree = "<group>"; };
 		3F2FA3FE1D79D094003E2AD8 /* StatusMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusMenuController.swift; sourceTree = "<group>"; };
 		3F2FA4001D79D66D003E2AD8 /* DefaultModeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultModeViewController.swift; sourceTree = "<group>"; };
 		3F2FA4021D7A059F003E2AD8 /* CurrentAppViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentAppViewController.swift; sourceTree = "<group>"; };
@@ -138,7 +129,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3FE7B6DB245DF8450027DB39 /* SmoothOperators in Frameworks */,
 				3F16ECDD23E9D1AC008BC89A /* DefaultsWrapper in Frameworks */,
 				3F15629F23FEDD0000CD0773 /* CoreGeometry in Frameworks */,
 			);
@@ -193,7 +183,6 @@
 				3F0A2A2F2014BA11009F9610 /* RunningAppsViewController.swift */,
 				3F4ABD0F20193B8D0075B178 /* RulesEditorViewController.swift */,
 				3F6D52CB2069667300517E57 /* AboutViewController.swift */,
-				3F2CAE69246038E30046D711 /* UserNotificationEnablementViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -207,8 +196,6 @@
 				3F6D52CD20696E2100517E57 /* PoppingLinkButton.swift */,
 				3F15629B23FE892A00CD0773 /* MoverImageView.swift */,
 				3F9EDD29245C7BAF0047D1AC /* MenuItemView.swift */,
-				3F2CAE6B246438590046D711 /* LinkButton.swift */,
-				3F266BA0246489D70005395F /* MultilinesCheckBoxLabel.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -223,7 +210,6 @@
 				3FF655C920751D1600C8D2FC /* PFMoveApplication.h */,
 				3FF655C820751D1600C8D2FC /* PFMoveApplication.m */,
 				3FD0AFA723C8759A00DC9533 /* AppErrorManager.swift */,
-				3F244070245D73180061960A /* UserNotificationHelper.swift */,
 			);
 			path = Misc;
 			sourceTree = "<group>";
@@ -317,7 +303,6 @@
 			packageProductDependencies = (
 				3F16ECDC23E9D1AC008BC89A /* DefaultsWrapper */,
 				3F15629E23FEDD0000CD0773 /* CoreGeometry */,
-				3FE7B6DA245DF8450027DB39 /* SmoothOperators */,
 			);
 			productName = Fluor;
 			productReference = 3FCD16A11D79793600C57B22 /* Fluor.app */;
@@ -362,7 +347,6 @@
 			packageReferences = (
 				3F16ECDB23E9D1AC008BC89A /* XCRemoteSwiftPackageReference "DefaultsWrapper" */,
 				3F15629D23FEDD0000CD0773 /* XCRemoteSwiftPackageReference "CoreGeometry" */,
-				3FE7B6D9245DF8450027DB39 /* XCRemoteSwiftPackageReference "SmoothOperators" */,
 			);
 			productRefGroup = 3FCD16A21D79793600C57B22 /* Products */;
 			projectDirPath = "";
@@ -417,19 +401,15 @@
 				3F4E36C32111EF7A00CDCAA0 /* CheckableMenuItem.swift in Sources */,
 				3F2571F41FDBD43500020194 /* TableViewContentAnimator.swift in Sources */,
 				3F7C349C1ED5EBAA0020C538 /* BehaviorController.swift in Sources */,
-				3F2CAE6C246438590046D711 /* LinkButton.swift in Sources */,
 				3F697A0C1F88D47C007BA558 /* MoverEffectView.swift in Sources */,
 				3F6D52CC2069667300517E57 /* AboutViewController.swift in Sources */,
-				3F244071245D73180061960A /* UserNotificationHelper.swift in Sources */,
 				3F0A2A302014BA11009F9610 /* RunningAppsViewController.swift in Sources */,
 				3FD0AFA823C8759A00DC9533 /* AppErrorManager.swift in Sources */,
-				3F2CAE6A246038E30046D711 /* UserNotificationEnablementViewController.swift in Sources */,
 				3F2FA4031D7A059F003E2AD8 /* CurrentAppViewController.swift in Sources */,
 				3F8879911FBF41EC005C28E6 /* NSStoryboardNamesExtension.swift in Sources */,
 				3FC44EFC1D7F16CB0065D433 /* Items.swift in Sources */,
 				3F2FA3FF1D79D094003E2AD8 /* StatusMenuController.swift in Sources */,
 				3FE784DD2052F591007F6200 /* NSViewExtension.swift in Sources */,
-				3F266BA1246489D70005395F /* MultilinesCheckBoxLabel.swift in Sources */,
 				3F84FE81200E655E00871275 /* StoryboardInstantiableProtocol.swift in Sources */,
 				3F16ECE123EDDF66008BC89A /* SetExtension.swift in Sources */,
 				3FE2A5F51E5650ED0011E544 /* MenuItemsController.swift in Sources */,
@@ -746,14 +726,6 @@
 				minimumVersion = 1.1.0;
 			};
 		};
-		3FE7B6D9245DF8450027DB39 /* XCRemoteSwiftPackageReference "SmoothOperators" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Pyroh/SmoothOperators.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.4.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -766,11 +738,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3F16ECDB23E9D1AC008BC89A /* XCRemoteSwiftPackageReference "DefaultsWrapper" */;
 			productName = DefaultsWrapper;
-		};
-		3FE7B6DA245DF8450027DB39 /* SmoothOperators */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 3FE7B6D9245DF8450027DB39 /* XCRemoteSwiftPackageReference "SmoothOperators" */;
-			productName = SmoothOperators;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
