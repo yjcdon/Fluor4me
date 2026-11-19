@@ -33,10 +33,9 @@ import Cocoa
 import os.log
 
 class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewControllerDelegate, SwitchMethodDidChangeObserver, ActiveApplicationDidChangeObserver {
-    @IBOutlet weak var statusMenuController: StatusMenuController!
-    @IBOutlet var defaultModeViewController: DefaultModeViewController!
+    weak var statusMenuController: StatusMenuController!
     
-    @objc dynamic private var isKeySwitchCapable: Bool = false
+    private(set) var isKeySwitchCapable: Bool = false
     private var globalEventManager: Any?
     private var fnDownTimestamp: TimeInterval? = nil
     private var shouldHandleFNKey: Bool = false
@@ -69,7 +68,7 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
             self.updateActiveApplication(app)
         }
         if AppManager.default.isDisabled {
-            self.statusMenuController.statusItem.image = #imageLiteral(resourceName: "IconDisabled")
+            self.statusMenuController.statusItem.button?.image = FluorImage.named("IconDisabled")
         } else {
             self.showKeyboardMode(self.appliedKeyboardMode)
         }
@@ -86,7 +85,7 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
                 self.appliedKeyboardMode = self.onLaunchKeyboardMode
             }
             catch { AppErrorManager.terminateApp(withReason: error.localizedDescription) }
-            self.statusMenuController.statusItem.image = #imageLiteral(resourceName: "IconDisabled")
+            self.statusMenuController.statusItem.button?.image = FluorImage.named("IconDisabled")
         }
     }
     
@@ -252,9 +251,9 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
     private func showKeyboardMode(_ mode: FKeyMode) {
         switch mode {
         case .media:
-            self.statusMenuController.statusItem.image = #imageLiteral(resourceName: "IconAppleMode")
+            self.statusMenuController.statusItem.button?.image = FluorImage.named("IconAppleMode")
         case .function:
-            self.statusMenuController.statusItem.image = #imageLiteral(resourceName: "IconOtherMode")
+            self.statusMenuController.statusItem.button?.image = FluorImage.named("IconOtherMode")
         }
     }
     

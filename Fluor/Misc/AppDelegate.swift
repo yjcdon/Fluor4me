@@ -29,14 +29,22 @@
 
 import Cocoa
 
-@NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate {
-    let statusMenuController: StatusMenuController = .init()
+@main
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    private let statusMenuController = StatusMenuController()
+
+    /// Start the menu bar application without loading a main nib.
+    static func main() {
+        let app = NSApplication.shared
+        let delegate = AppDelegate()
+        app.delegate = delegate
+        app.setActivationPolicy(.accessory)
+        app.run()
+        withExtendedLifetime(delegate) {}
+    }
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         migratePreferences()
-        ValueTransformer.setValueTransformer(RuleValueTransformer(), forName: NSValueTransformerName("RuleValueTransformer"))
-        
         // Check accessibility
         if !AXIsProcessTrusted() && !AppManager.default.hasAlreadyAnsweredAccessibility {
             let options : NSDictionary = [kAXTrustedCheckOptionPrompt.takeRetainedValue(): true]
@@ -44,11 +52,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             AppManager.default.hasAlreadyAnsweredAccessibility = true
         }
         
-        self.loadMainMenu()
+        statusMenuController.start()
     }
     
     func applicationWillTerminate(_ notification: Notification) {
-        self.statusMenuController.behaviorController?.performTerminationCleaning()
+        statusMenuController.behaviorController.performTerminationCleaning()
     }
 
     /// Import preferences once after the menu bar registration changes bundle identifiers.
@@ -69,12 +77,4 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         defaults.setPersistentDomain(current, forName: identifier)
     }
 
-    private func loadMainMenu() {
-        let nib = NSNib(nibNamed: "MainMenu", bundle: nil)
-        nib?.instantiate(withOwner: self.statusMenuController, topLevelObjects: nil)
-        
-        NSApp.hide(self)
-    }
 }
-
-

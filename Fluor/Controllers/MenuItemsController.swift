@@ -29,72 +29,93 @@
 
 import Cocoa
 
-class MenuItemsController: NSObject, SwitchMethodDidChangeObserver, TriggerSectionVisibilityDidChangeObserver {
-    @IBOutlet weak var menu: NSMenu!
-    @IBOutlet var switchMethodViewController: SwitchMethodViewController!
-    @IBOutlet var currentAppViewController: CurrentAppViewController!
-    @IBOutlet weak var defaultModeViewController: DefaultModeViewController!
-    
-    override init() {
+final class MenuItemsController: NSObject, SwitchMethodDidChangeObserver, TriggerSectionVisibilityDidChangeObserver {
+    private weak var menu: NSMenu?
+    private let switchMethodViewController = SwitchMethodViewController()
+    private let currentAppViewController = CurrentAppViewController()
+    private let defaultModeViewController = DefaultModeViewController()
+
+    init(menu: NSMenu, behaviorController: BehaviorController) {
+        self.menu = menu
         super.init()
-        self.startObservingSwitchMethodDidChange()
-        self.startObservingTriggerSectionVisibilityDidChange()
+        defaultModeViewController.delegate = behaviorController
+        startObservingSwitchMethodDidChange()
+        startObservingTriggerSectionVisibilityDidChange()
     }
-    
+
     deinit {
-        self.stopObservingSwitchMethodDidChange()
-        self.stopObservingTriggerSectionVisibilityDidChange()
+        stopObservingSwitchMethodDidChange()
+        stopObservingTriggerSectionVisibilityDidChange()
     }
-    
+
+    /// Install the custom rows and restore the saved trigger presentation.
     func setupController() {
-        let switchingPlaceHolder = menu.item(withTag: 1)
-        let statePlaceHolder = menu.item(withTag: 3)
-        let currentPlaceHolder = menu.item(withTag: 5)
-        switchingPlaceHolder?.view = switchMethodViewController.view
-        statePlaceHolder?.view = defaultModeViewController.view
-        currentPlaceHolder?.view = currentAppViewController.view
-        if case SwitchMethod.key = AppManager.default.switchMethod {
-            currentAppViewController.shrinkView()
-        }
+        menu?.item(withTag: 1)?.view = switchMethodViewController.view
+        menu?.item(withTag: 3)?.view = defaultModeViewController.view
+        menu?.item(withTag: 5)?.view = currentAppViewController.view
+        setTriggerVisible(!AppManager.default.hideSwitchMethod)
+        updateSwitchMethod(AppManager.default.switchMethod)
     }
-    
-    // MARK: - SwitchMethodDidChangeObserver
-    
+
+    /// Read preferences when the menu opens so edits from other windows are visible.
+    func refreshControls(isEnabled: Bool, canSwitch: Bool) {
+        updateSwitchMethod(AppManager.default.switchMethod)
+        switchMethodViewController.updateAccessibility(canSwitch: canSwitch)
+        defaultModeViewController.refreshControls(isEnabled: isEnabled)
+        currentAppViewController.setControlsEnabled(isEnabled)
+    }
+
     func switchMethodDidChange(notification: Notification) {
-        guard let method = notification.userInfo?["method"] as? SwitchMethod,
-            method != currentAppViewController.currentSwitchMethod else { return }
-        switch method {
-        case .key:
+        guard let method = notification.userInfo?["method"] as? SwitchMethod else { return }
+        updateSwitchMethod(method)
+    }
+
+    func triggerSectionVisibilityDidChange(notification: Notification) {
+        guard let visible = notification.userInfo?["visible"] as? Bool else { return }
+        setTriggerVisible(visible)
+    }
+
+    /// Keep the current-application row compact in global Fn mode.
+    private func updateSwitchMethod(_ method: SwitchMethod) {
+        switchMethodViewController.selectMethod(method)
+        let compact = method == .key
+        guard compact != (currentAppViewController.currentSwitchMethod == .key) else { return }
+        if compact {
             currentAppViewController.shrinkView()
-        case .window, .hybrid:
+        } else {
             currentAppViewController.expandView()
         }
     }
-    
-    // MARK: - TriggerSectionVisibilityDidChangeObserver
-    
-    @objc func triggerSectionVisibilityDidChange(notification: Notification) {
-        guard let visible = notification.userInfo?["visible"] as? Bool else { return }
-        if visible {
-            self.showTriggerSection()
-        } else {
-            self.hideTriggerSection()
+
+    /// Hide the section and its accompanying divider together.
+    private func setTriggerVisible(_ visible: Bool) {
+        menu?.item(withTag: 1)?.isHidden = !visible
+        menu?.item(withTag: 2)?.isHidden = !visible
+    }
+}
+
+extension MenuItemView {
+    /// Lay out a menu title with its controls at the trailing edge.
+    static func row(title: NSTextField, controls: [NSControl]) -> MenuItemView {
+        let row = MenuItemView(frame: NSRect(x: 0, y: 0, width: 269, height: 27))
+        title.font = .boldSystemFont(ofSize: NSFont.systemFontSize)
+        title.lineBreakMode = .byTruncatingTail
+        title.translatesAutoresizingMaskIntoConstraints = false
+        row.addSubview(title)
+        NSLayoutConstraint.activate([
+            title.leadingAnchor.constraint(equalTo: row.leadingAnchor, constant: 20),
+            title.centerYAnchor.constraint(equalTo: row.centerYAnchor)
+        ])
+        for control in controls {
+            control.translatesAutoresizingMaskIntoConstraints = false
+            control.setContentCompressionResistancePriority(.required, for: .horizontal)
+            row.addSubview(control)
+            NSLayoutConstraint.activate([
+                control.leadingAnchor.constraint(greaterThanOrEqualTo: title.trailingAnchor, constant: 8),
+                control.trailingAnchor.constraint(equalTo: row.trailingAnchor, constant: -20),
+                control.centerYAnchor.constraint(equalTo: row.centerYAnchor)
+            ])
         }
-    }
-    
-    // MARK: - Private functions
-    
-    private func showTriggerSection() {
-        guard let switchMethodItem = self.menu.item(at: 0), let separatorItem = self.menu.item(at: 1) else { return }
-        switchMethodItem.view = self.switchMethodViewController.view
-        switchMethodItem.isHidden = false
-        separatorItem.isHidden = false
-    }
-    
-    private func hideTriggerSection() {
-        guard let switchMethodItem = self.menu.item(at: 0), let separatorItem = self.menu.item(at: 1) else { return }
-        switchMethodItem.view = nil
-        switchMethodItem.isHidden = true
-        separatorItem.isHidden = true
+        return row
     }
 }

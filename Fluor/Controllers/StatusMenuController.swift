@@ -29,24 +29,33 @@
 
 import Cocoa
 
-class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuControlObserver {
-    //MARK: - Menu Delegate
-    @IBOutlet weak var statusMenu: NSMenu!
-    @IBOutlet var menuItemsController: MenuItemsController!
-    @IBOutlet var behaviorController: BehaviorController!
-    
+final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuControlObserver {
+    private let statusMenu = NSMenu()
+    private let loginController = LaunchAtLoginController()
+    private var menuItemsController: MenuItemsController!
+    let behaviorController = BehaviorController()
+
     private var rulesController: RulesEditorWindowController?
     private var aboutController: AboutWindowController?
     private var preferencesController: PreferencesWindowController?
     private var runningAppsController: RunningAppWindowController?
     
-    var statusItem: NSStatusItem!
+    private lazy var rulesItem = makeItem("Manage rules...", #selector(editRules(_:)), image: "Rules")
+    private lazy var runningAppsItem = makeItem("Running applications...", #selector(showRunningApps(_:)), image: "RunningApps")
+    private lazy var loginItem = makeToggle("Start Fluor at login", #selector(toggleLaunchAtLogin(_:)))
+    private lazy var disabledItem = makeToggle("Disabled", #selector(toggleApplicationState(_:)))
 
-    override func awakeFromNib() {
+    private(set) var statusItem: NSStatusItem!
+
+    /// Connect the status menu before the keyboard controller starts.
+    func start() {
         setupStatusMenu()
-        self.menuItemsController.setupController()
-        self.behaviorController.setupController()
+        menuItemsController = MenuItemsController(menu: statusMenu, behaviorController: behaviorController)
+        menuItemsController.setupController()
+        behaviorController.statusMenuController = self
+        behaviorController.setupController()
         startObservingMenuControlNotification()
+        menuWillOpen(statusMenu)
     }
     
     deinit {
@@ -71,6 +80,26 @@ class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuCont
     
     /// Register the menu bar item and let macOS 27 manage visibility through System Settings.
     private func setupStatusMenu() {
+        statusMenu.delegate = self
+        statusMenu.autoenablesItems = false
+        for (index, title) in ["Switch method", "", "Default mode", "", "Current application", ""].enumerated() {
+            let item = title.isEmpty ? NSMenuItem.separator() : NSMenuItem(
+                title: NSLocalizedString(title, comment: "Menu section"),
+                action: nil, keyEquivalent: ""
+            )
+            item.tag = index + 1
+            statusMenu.addItem(item)
+        }
+        statusMenu.addItem(rulesItem)
+        statusMenu.addItem(runningAppsItem)
+        statusMenu.addItem(.separator())
+        statusMenu.addItem(makeItem("Preferences...", #selector(showPreferences(_:)), key: ",", image: "Preferences"))
+        statusMenu.addItem(loginItem)
+        statusMenu.addItem(disabledItem)
+        statusMenu.addItem(.separator())
+        statusMenu.addItem(makeItem("About Fluor4me", #selector(showAbout(_:)), image: "About"))
+        statusMenu.addItem(makeItem("Quit", #selector(quitApplication(_:)), key: "q", image: "Quit"))
+
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         self.statusItem.autosaveName = "Fluor4me"
         if #available(macOS 27, *) {
@@ -82,10 +111,42 @@ class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuCont
         self.statusItem.menu = statusMenu
     }
 
-    // MARK: - NSWindowDelegate
-    
+    /// Use the existing artwork and command shortcuts for native menu actions.
+    private func makeItem(_ title: String, _ action: Selector, key: String = "", image: String? = nil) -> NSMenuItem {
+        let item = NSMenuItem(title: NSLocalizedString(title, comment: "Menu item"), action: action, keyEquivalent: key)
+        item.target = self
+        if let image {
+            item.image = FluorImage.named(image)
+        }
+        return item
+    }
+
+    /// Give an on/off item the same state indicators as the previous menu.
+    private func makeToggle(_ title: String, _ action: Selector) -> NSMenuItem {
+        let item = makeItem(title, action)
+        if let on = FluorImage.named("CheckEnabled"), let off = FluorImage.named("CheckDisabled") {
+            item.onStateImage = on
+            item.offStateImage = off
+        }
+        return item
+    }
+
     func menuWillOpen(_ menu: NSMenu) {
-        self.behaviorController.adaptToAccessibilityTrust()
+        behaviorController.adaptToAccessibilityTrust()
+        loginItem.state = loginController.launchAtLogin ? .on : .off
+        refreshManagementItems()
+    }
+
+    /// Refresh controls from the same preferences used to apply keyboard behavior.
+    private func refreshManagementItems() {
+        let disabled = AppManager.default.isDisabled
+        disabledItem.state = disabled ? .on : .off
+        rulesItem.isEnabled = !disabled
+        runningAppsItem.isEnabled = !disabled
+        menuItemsController.refreshControls(
+            isEnabled: !disabled,
+            canSwitch: behaviorController.isKeySwitchCapable
+        )
     }
     
     // MARK: - MenuControlObserver
@@ -100,12 +161,12 @@ class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuCont
         }
     }
     
-    // MARK: IBActions
+    // MARK: - Menu Actions
     
     /// Show the *Edit Rules* window.
     ///
     /// - parameter sender: The object that sent the action.
-    @IBAction func editRules(_ sender: AnyObject) {
+    @objc func editRules(_ sender: AnyObject) {
         guard rulesController == nil else {
             rulesController?.window?.orderFrontRegardless()
             return
@@ -118,7 +179,7 @@ class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuCont
     /// Show the *About* window.
     ///
     /// - parameter sender: The object that sent the action.
-    @IBAction func showAbout(_ sender: AnyObject) {
+    @objc func showAbout(_ sender: AnyObject) {
         guard aboutController == nil else {
             aboutController?.window?.makeKeyAndOrderFront(self)
             aboutController?.window?.makeMain()
@@ -135,7 +196,7 @@ class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuCont
     /// Show the *Preferences* window.
     ///
     /// - parameter sender: The object that sent the action.
-    @IBAction func showPreferences(_ sender: AnyObject) {
+    @objc func showPreferences(_ sender: AnyObject) {
         guard preferencesController == nil else {
             preferencesController?.window?.makeKeyAndOrderFront(self)
             preferencesController?.window?.makeMain()
@@ -152,7 +213,7 @@ class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuCont
     /// Show the *Running Applications* window.
     ///
     /// - parameter sender: The object that sent the action.
-    @IBAction func showRunningApps(_ sender: AnyObject) {
+    @objc func showRunningApps(_ sender: AnyObject) {
         guard runningAppsController == nil else {
             runningAppsController?.window?.orderFrontRegardless()
             return
@@ -167,14 +228,23 @@ class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, MenuCont
     /// If disabled the keyboard behaviour is set as its behaviour before app launch.
     ///
     /// - Parameter sender: The object that sent the action.
-    @IBAction func toggleApplicationState(_ sender: NSMenuItem) {
-        self.behaviorController.setApplicationIsEnabled(sender.state == .off)
+    @objc func toggleApplicationState(_ sender: NSMenuItem) {
+        let enabled = AppManager.default.isDisabled
+        AppManager.default.isDisabled = !enabled
+        behaviorController.setApplicationIsEnabled(enabled)
+        refreshManagementItems()
+    }
+
+    /// The operating system remains the source of truth for login registration.
+    @objc private func toggleLaunchAtLogin(_ sender: NSMenuItem) {
+        loginController.launchAtLogin.toggle()
+        sender.state = loginController.launchAtLogin ? .on : .off
     }
     
     /// Terminate the application.
     ///
     /// - parameter sender: The object that sent the action.
-    @IBAction func quitApplication(_ sender: AnyObject) {
+    @objc func quitApplication(_ sender: AnyObject) {
         NSWorkspace.shared.notificationCenter.removeObserver(self)
         NSApp.terminate(self)
     }

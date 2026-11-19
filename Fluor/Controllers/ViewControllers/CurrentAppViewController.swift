@@ -29,14 +29,13 @@
 
 import Cocoa
 
-class CurrentAppViewController: NSViewController, BehaviorDidChangeObserver, ActiveApplicationDidChangeObserver {
+final class CurrentAppViewController: NSViewController, BehaviorDidChangeObserver, ActiveApplicationDidChangeObserver {
+    private let appIconView = NSImageView()
+    private let appNameLabel = NSTextField(labelWithString: "")
+    private let behaviorSegment = NSSegmentedControl()
+    private var imageConstraint: NSLayoutConstraint!
 
-    @IBOutlet weak var appIconView: NSImageView!
-    @IBOutlet weak var appNameLabel: NSTextField!
-    @IBOutlet weak var behaviorSegment: NSSegmentedControl!
-    @IBOutlet weak var imageConstraint: NSLayoutConstraint!
-    
-    internal var currentSwitchMethod = SwitchMethod.window
+    private(set) var currentSwitchMethod = SwitchMethod.window
     
     private var currentAppID: String = ""
     private var currentAppURL: URL?
@@ -44,6 +43,49 @@ class CurrentAppViewController: NSViewController, BehaviorDidChangeObserver, Act
     deinit {
         self.stopObservingBehaviorDidChange()
         self.stopObservingActiveApplicationDidChange()
+    }
+
+    override func loadView() {
+        let row = MenuItemView(frame: NSRect(x: 0, y: 0, width: 269, height: 72))
+        appIconView.image = NSImage(named: NSImage.applicationIconName)
+        appIconView.imageScaling = .scaleProportionallyUpOrDown
+        appIconView.translatesAutoresizingMaskIntoConstraints = false
+        row.addSubview(appIconView)
+        imageConstraint = appIconView.heightAnchor.constraint(equalToConstant: 64)
+
+        appNameLabel.font = .systemFont(ofSize: NSFont.systemFontSize, weight: .semibold)
+        appNameLabel.lineBreakMode = .byTruncatingTail
+        appNameLabel.allowsExpansionToolTips = true
+        behaviorSegment.segmentStyle = .rounded
+        behaviorSegment.trackingMode = .selectOne
+        behaviorSegment.controlSize = .small
+        behaviorSegment.segmentCount = 3
+        behaviorSegment.target = self
+        behaviorSegment.action = #selector(behaviorChanged(_:))
+        behaviorSegment.setAccessibilityLabel(NSLocalizedString("Current application", comment: "Menu row"))
+        for (behavior, image) in [(AppBehavior.inferred, "DefaultMode"), (.media, "AppleMode"), (.function, "OtherMode")] {
+            behaviorSegment.setImage(FluorImage.named(image), forSegment: behavior.rawValue)
+            behaviorSegment.setWidth(32, forSegment: behavior.rawValue)
+            behaviorSegment.setToolTip(behavior.label, forSegment: behavior.rawValue)
+        }
+        behaviorSegment.selectedSegment = AppBehavior.inferred.rawValue
+
+        let controls = NSStackView(views: [appNameLabel, behaviorSegment])
+        controls.orientation = .vertical
+        controls.alignment = .leading
+        controls.spacing = 4
+        controls.translatesAutoresizingMaskIntoConstraints = false
+        row.addSubview(controls)
+        NSLayoutConstraint.activate([
+            appIconView.leadingAnchor.constraint(equalTo: row.leadingAnchor, constant: 20),
+            appIconView.centerYAnchor.constraint(equalTo: row.centerYAnchor),
+            imageConstraint,
+            appIconView.widthAnchor.constraint(equalTo: appIconView.heightAnchor),
+            controls.leadingAnchor.constraint(equalTo: appIconView.trailingAnchor, constant: 8),
+            controls.trailingAnchor.constraint(equalTo: row.trailingAnchor, constant: -20),
+            controls.centerYAnchor.constraint(equalTo: row.centerYAnchor)
+        ])
+        view = row
     }
     
     override func viewDidLoad() {
@@ -54,7 +96,15 @@ class CurrentAppViewController: NSViewController, BehaviorDidChangeObserver, Act
             self.setCurrent(app: currentApp)
         }
     }
-    
+
+    /// Prevent rule edits while keyboard management is paused.
+    func setControlsEnabled(_ enabled: Bool) {
+        appIconView.isEnabled = enabled
+        appNameLabel.isEnabled = enabled
+        behaviorSegment.isEnabled = enabled
+    }
+
+    /// Keep the app name visible when the trigger only changes the global setting.
     func shrinkView() {
         self.currentSwitchMethod = .key
         var newFrame = self.view.frame
@@ -63,7 +113,8 @@ class CurrentAppViewController: NSViewController, BehaviorDidChangeObserver, Act
         self.behaviorSegment.isHidden = true
         self.view.setFrameSize(newFrame.size)
     }
-    
+
+    /// Restore the app-specific mode choices when per-app switching is active.
     func expandView() {
         self.currentSwitchMethod = .window
         var newFrame = self.view.frame
@@ -77,8 +128,9 @@ class CurrentAppViewController: NSViewController, BehaviorDidChangeObserver, Act
     /// It makes sure the behavior manager gets notfified of this change.
     ///
     /// - parameter sender: The object that sent the action.
-    @IBAction func behaviorChanged(_ sender: NSSegmentedControl) {
-        guard let behavior = AppBehavior(rawValue: sender.selectedSegment), let url = self.currentAppURL else { return }
+    @objc private func behaviorChanged(_ sender: NSSegmentedControl) {
+        guard let behavior = AppBehavior(rawValue: sender.selectedSegment), let url = self.currentAppURL,
+              AppManager.default.behaviorForApp(id: currentAppID) != behavior else { return }
         AppManager.default.propagate(behavior: behavior, forApp: self.currentAppID, at: url, from: .mainMenu)
     }
     
@@ -101,7 +153,7 @@ class CurrentAppViewController: NSViewController, BehaviorDidChangeObserver, Act
         if let name = app.localizedName {
             appNameLabel.stringValue = name
         } else {
-            appNameLabel.stringValue = "An app"
+            appNameLabel.stringValue = NSLocalizedString("An app", comment: "Fallback application name")
         }
     }
     

@@ -29,18 +29,59 @@
 
 import Cocoa
 
-class SwitchMethodViewController: NSViewController, MenuControlPoster, SwitchMethodDidChangePoster {
-    @IBOutlet weak var methodSegmentedControl: NSSegmentedControl!
-    @objc private dynamic var switchCapable: Bool = true
-    
-    @IBAction func changeSwitchMethod(_ sender: NSSegmentedControl) {
-        guard let method = SwitchMethod(rawValue: sender.selectedSegment) else { return }
-        self.postSwitchMethodDidChangeNotification(method: method)
+final class SwitchMethodViewController: NSViewController, MenuControlPoster, SwitchMethodDidChangePoster {
+    private let methodControl = NSSegmentedControl()
+    private lazy var permissionButton = NSButton(
+        title: NSLocalizedString("Ask permission", comment: "Accessibility authorization"),
+        target: self, action: #selector(askAccessibilityPermission(_:))
+    )
+
+    override func loadView() {
+        let title = NSTextField(labelWithString: NSLocalizedString("Trigger", comment: "Menu row"))
+        methodControl.segmentStyle = .rounded
+        methodControl.trackingMode = .selectOne
+        methodControl.controlSize = .small
+        methodControl.segmentCount = 3
+        methodControl.target = self
+        methodControl.action = #selector(changeSwitchMethod(_:))
+        methodControl.setAccessibilityLabel(title.stringValue)
+        let toolTips = [
+            NSLocalizedString("Change mode with the active application", comment: "Trigger option"),
+            NSLocalizedString("Set mode for the active application when the fn key is pressed", comment: "Trigger option"),
+            NSLocalizedString("Set the default mode when the fn key is pressed", comment: "Trigger option")
+        ]
+        for (index, name) in ["AppSwitch", "MixedSwitch", "FnKey"].enumerated() {
+            methodControl.setImage(FluorImage.named(name), forSegment: index)
+            methodControl.setWidth(32, forSegment: index)
+            methodControl.setToolTip(toolTips[index], forSegment: index)
+        }
+        permissionButton.bezelStyle = .rounded
+        permissionButton.controlSize = .small
+        view = MenuItemView.row(title: title, controls: [methodControl, permissionButton])
     }
-    
-    @IBAction func askAccessibilityPersmission(_ sender: Any) {
-        self.postMenuNeedsToCloseNotification()
-        let options : NSDictionary = [kAXTrustedCheckOptionPrompt.takeRetainedValue(): true]
+
+    /// Show permission recovery until macOS grants access for the Fn shortcut.
+    func updateAccessibility(canSwitch: Bool) {
+        methodControl.isHidden = !canSwitch
+        permissionButton.isHidden = canSwitch
+    }
+
+    /// Reflect the saved trigger when changed by another window.
+    func selectMethod(_ method: SwitchMethod) {
+        methodControl.selectedSegment = method.rawValue
+    }
+
+    /// Persist the trigger so menu and keyboard observers use the same value.
+    @objc private func changeSwitchMethod(_ sender: NSSegmentedControl) {
+        guard let method = SwitchMethod(rawValue: sender.selectedSegment) else { return }
+        AppManager.default.switchMethod = method
+        postSwitchMethodDidChangeNotification(method: method)
+    }
+
+    /// Close the menu before requesting permission through the system.
+    @objc private func askAccessibilityPermission(_ sender: Any) {
+        postMenuNeedsToCloseNotification()
+        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
         AXIsProcessTrustedWithOptions(options)
     }
 }
