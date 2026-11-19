@@ -48,7 +48,6 @@ final class AboutViewController: NSViewController {
         github.image = mark
         github.imagePosition = .imageOnly
         github.isBordered = false
-        github.toolTip = githubTitle
         github.setAccessibilityLabel(githubTitle)
 
         let icon = NSImageView(image: NSApp.applicationIconImage ?? NSImage())
