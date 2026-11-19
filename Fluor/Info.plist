@@ -21,17 +21,7 @@
 	<key>CFBundleVersion</key>
 	<string>2347</string>
 	<key>FLGithubURL</key>
-	<string>https://github.com/Pyroh/Fluor</string>
-	<key>FLPyrolyseURL</key>
-	<string>https://pyrolyse.it</string>
-	<key>FLRNListURL</key>
-	<string>https://resources.pyrolyse.it/releasenotes/Fluor/versions.json</string>
-	<key>FLSupportEmail</key>
-	<string>mailto:fluor.support@pyrolyse.it?subject=Fluor%20Issue</string>
-	<key>FLSupportURL</key>
-	<string>https://pyrolyse.it</string>
-	<key>FLTwitterURL</key>
-	<string>https://twitter.com/__pyroh</string>
+	<string>https://github.com/yjcdon/Fluor4me</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
 	<key>LSMinimumSystemVersion</key>

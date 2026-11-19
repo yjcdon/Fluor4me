@@ -17,8 +17,8 @@
 /* Class = "NSMenuItem"; title = "Disabled"; ObjectID = "DqN-qz-yQz"; */
 "DqN-qz-yQz.title" = "禁用";
 
-/* Class = "NSMenuItem"; title = "About Fluor"; ObjectID = "Ib7-Rw-HnK"; */
-"Ib7-Rw-HnK.title" = "关于 Fluor";
+/* Class = "NSMenuItem"; title = "About Fluor4me"; ObjectID = "Ib7-Rw-HnK"; */
+"Ib7-Rw-HnK.title" = "关于 Fluor4me";
 
 /* Class = "NSMenuItem"; title = "Manage rules..."; ObjectID = "MHf-OK-jHk"; */
 "MHf-OK-jHk.title" = "规则...";

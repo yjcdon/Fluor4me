@@ -42,7 +42,6 @@ extension UserDefaultsKeyName {
     static let useLightIcon: UserDefaultsKeyName = "UseLightIcon"
     static let showAllRunningProcesses: UserDefaultsKeyName = "ShowAllProcesses"
     static let fnKeyMaximumDelay: UserDefaultsKeyName = "FNKeyReleaseMaximumDelay"
-    static let lastRunVersion: UserDefaultsKeyName = "LastRunVersion"
     static let hideSwitchMethod: UserDefaultsKeyName = "HideSwitchMethod"
     static let sendFnKeyNotification: UserDefaultsKeyName = "sendFnKeyNotification"
     static let hideNotificationAuthorizationPopup: UserDefaultsKeyName = "hideNotificationAuthorizationPopup"
@@ -65,9 +64,6 @@ class AppManager: BehaviorDidChangePoster {
     
     @Defaults(key: .hideSwitchMethod, defaultValue: false)
     var hideSwitchMethod: Bool
-    
-    @Defaults(key: .lastRunVersion, defaultValue: "unknown")
-    var lastRunVersion: String
     
     @Defaults(key: .restoreStateOnQuit, defaultValue: false)
     var shouldRestoreStateOnQuit: Bool

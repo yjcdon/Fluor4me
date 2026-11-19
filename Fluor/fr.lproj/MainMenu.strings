@@ -25,8 +25,8 @@
 /* Class = "NSMenuItem"; title = "Switch method"; ObjectID = "hM4-Z2-ndk"; */
 "hM4-Z2-ndk.title" = "Switch method";
 
-/* Class = "NSMenuItem"; title = "About Fluor"; ObjectID = "Ib7-Rw-HnK"; */
-"Ib7-Rw-HnK.title" = "À propos de Fluor";
+/* Class = "NSMenuItem"; title = "About Fluor4me"; ObjectID = "Ib7-Rw-HnK"; */
+"Ib7-Rw-HnK.title" = "À propos de Fluor4me";
 
 /* Class = "NSMenuItem"; title = "Manage rules..."; ObjectID = "MHf-OK-jHk"; */
 "MHf-OK-jHk.title" = "Gérer les règles...";

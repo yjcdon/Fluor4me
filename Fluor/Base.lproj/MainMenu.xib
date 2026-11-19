@@ -172,7 +172,7 @@
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="dNi-gO-s9S"/>
-                <menuItem title="About Fluor" image="About" id="Ib7-Rw-HnK">
+                <menuItem title="About Fluor4me" image="About" id="Ib7-Rw-HnK">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="showAbout:" target="-2" id="IUy-x1-acN"/>

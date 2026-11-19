@@ -31,17 +31,13 @@ import Cocoa
 
 class AboutViewController: NSViewController {
     @IBOutlet weak var versionLabel: NSTextField!
-    @IBOutlet weak var webpageButton: NSButton!
-    @IBOutlet weak var twitterButton: NSButton!
-    @IBOutlet weak var githubButton: NSButton!
-    @IBOutlet weak var supportButton: NSButton!
-    @IBOutlet weak var iconView: NSImageView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         let bundleVersion = getBundleVersion()
-        versionLabel.stringValue = "Version \(bundleVersion.version) build \(bundleVersion.build)"
+        let title = NSLocalizedString("Version %@ build %@", comment: "Application version and build number in About.")
+        versionLabel.stringValue = String(format: title, bundleVersion.version, bundleVersion.build)
     }
     
     private func getBundleVersion() -> (version: String, build: String) {
@@ -51,35 +47,13 @@ class AboutViewController: NSViewController {
         return (version, build)
     }
     
-    private func openUrlForInfo(key: String) {
-        guard let url = self.urlForInfo(key: key) else { return }
-        NSWorkspace.shared.open(url)
-    }
-    
-    private func urlForInfo(key: String) -> URL? {
-        guard let str = Bundle.main.infoDictionary?[key] as? String,
-            let url = URL(string: str) else { return nil }
-        
-        return url
-    }
-    
     @IBAction func closeWindow(_ sender: Any) {
         view.window?.close()
     }
     
-    @IBAction func goToWebpage(_ sender: Any) {
-        self.openUrlForInfo(key: "FLPyrolyseURL")
-    }
-    
-    @IBAction func goToTwitter(_ sender: Any) {
-        self.openUrlForInfo(key: "FLTwitterURL")
-    }
-    
     @IBAction func goToGithub(_ sender: Any) {
-        self.openUrlForInfo(key: "FLGithubURL")
-    }
-    
-    @IBAction func goToSupport(_ sender: Any) {
-        self.openUrlForInfo(key: "FLSupportEmail")
+        guard let address = Bundle.main.object(forInfoDictionaryKey: "FLGithubURL") as? String,
+              let url = URL(string: address) else { return }
+        NSWorkspace.shared.open(url)
     }
 }

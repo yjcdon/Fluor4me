@@ -46,3 +46,4 @@
 /* No comment provided by engineer. */
 "version %@" = "version %@";
 
+"Version %@ build %@" = "Version %@ (build %@)";
