@@ -79,6 +79,8 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
         if enabled {
             self.adaptModeForApp(withId: self.currentAppID)
         } else {
+            self.shouldHandleFNKey = false
+            self.fnDownTimestamp = nil
             self.chromeF4Shortcut.deactivate()
             do {
                 try FKeyManager.setCurrentFKeyMode(self.onLaunchKeyboardMode)
@@ -253,7 +255,7 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
     }
     
     private func manageKeyPress(event: NSEvent) {
-        guard self.switchMethod != .window else { return }
+        guard !AppManager.default.isDisabled, self.switchMethod != .window else { return }
         if event.type == .flagsChanged {
             if event.modifierFlags.contains(.function) {
                 if event.keyCode == 63 {
