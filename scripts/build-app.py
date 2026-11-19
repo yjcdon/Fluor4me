@@ -46,6 +46,7 @@ def build(output, identity, debug, scratch):
     copy_app_icon(resources, scratch)
     for icon in (FLUOR / "MenuBarIcons").glob("*.png"):
         shutil.copyfile(icon, resources / icon.name)
+    shutil.copyfile(FLUOR / "GitHubMark.pdf", resources / "GitHubMark.pdf")
     for translations in sorted(FLUOR.glob("*.lproj/Localizable.strings")):
         destination = resources / translations.parent.name
         destination.mkdir()

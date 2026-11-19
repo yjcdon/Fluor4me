@@ -39,7 +39,17 @@ final class AboutViewController: NSViewController {
         let versionLabel = NSTextField(labelWithString: String(format: format, version, build))
         let credit = NSTextField(labelWithString: NSLocalizedString("Copyright (c) 2016 Pierre Tacchi", comment: ""))
         credit.textColor = .secondaryLabelColor
-        let github = NSButton(title: NSLocalizedString("Fluor4me on GitHub", comment: ""), target: self, action: #selector(goToGithub(_:)))
+
+        let githubTitle = NSLocalizedString("Fluor4me on GitHub", comment: "")
+        let mark = NSImage(named: "GitHubMark")
+        mark?.size = NSSize(width: 28, height: 28)
+        mark?.isTemplate = true
+        let github = NSButton(title: "", target: self, action: #selector(goToGithub(_:)))
+        github.image = mark
+        github.imagePosition = .imageOnly
+        github.isBordered = false
+        github.toolTip = githubTitle
+        github.setAccessibilityLabel(githubTitle)
 
         let icon = NSImageView(image: NSApp.applicationIconImage ?? NSImage())
         icon.imageScaling = .scaleProportionallyUpOrDown
@@ -62,11 +72,7 @@ final class AboutViewController: NSViewController {
         self.view = view
     }
 
-    override func cancelOperation(_ sender: Any?) {
-        view.window?.performClose(sender)
-    }
-
-    /// Open the project's GitHub page from the About window.
+    /// Open the project's GitHub page from Settings.
     @objc private func goToGithub(_ sender: Any) {
         guard let address = Bundle.main.object(forInfoDictionaryKey: "FLGithubURL") as? String,
               let url = URL(string: address) else { return }

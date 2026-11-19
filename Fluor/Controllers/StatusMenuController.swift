@@ -35,7 +35,6 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
     let behaviorController = BehaviorController()
 
     private var rulesController: RulesEditorWindowController?
-    private var aboutController: AboutWindowController?
     private var preferencesController: PreferencesWindowController?
     private var runningAppsController: RunningAppWindowController?
     
@@ -65,8 +64,6 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
         NotificationCenter.default.removeObserver(self, name: NSWindow.willCloseNotification, object: object)
         if object.isEqual(rulesController?.window) {
             rulesController = nil
-        } else if object.isEqual(aboutController?.window) {
-            aboutController = nil
         } else if object.isEqual(preferencesController?.window) {
             preferencesController = nil
         } else if object.isEqual(runningAppsController?.window) {
@@ -91,10 +88,9 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
         statusMenu.addItem(rulesItem)
         statusMenu.addItem(runningAppsItem)
         statusMenu.addItem(.separator())
-        statusMenu.addItem(makeItem("Preferences...", #selector(showPreferences(_:)), key: ",", icon: .settings))
+        statusMenu.addItem(makeItem("Settings...", #selector(showPreferences(_:)), key: ",", icon: .settings))
         statusMenu.addItem(disabledItem)
         statusMenu.addItem(.separator())
-        statusMenu.addItem(makeItem("About Fluor4me", #selector(showAbout(_:)), icon: .about))
         statusMenu.addItem(makeItem("Quit", #selector(quitApplication(_:)), key: "q", icon: .quit))
 
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
@@ -153,12 +149,6 @@ final class StatusMenuController: NSObject, NSMenuDelegate, NSWindowDelegate, Me
     @objc func editRules(_ sender: AnyObject) {
         rulesController = rulesController ?? .instantiate()
         showWindow(rulesController)
-    }
-
-    /// Open or restore the About window from the status menu.
-    @objc func showAbout(_ sender: AnyObject) {
-        aboutController = aboutController ?? .instantiate()
-        showWindow(aboutController)
     }
 
     /// Open or restore settings from the status menu.

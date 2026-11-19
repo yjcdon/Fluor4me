@@ -33,7 +33,7 @@ final class PreferencesWindowController: NSWindowController {
     /// Create the settings window and restore its last position.
     static func instantiate() -> PreferencesWindowController {
         let window = NSWindow(contentViewController: PreferencesTabViewController())
-        window.title = NSLocalizedString("Preferences", comment: "")
+        window.title = NSLocalizedString("Settings", comment: "")
         window.styleMask = [.titled, .closable, .miniaturizable]
         window.toolbarStyle = .preference
         window.isReleasedWhenClosed = false

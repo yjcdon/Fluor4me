@@ -35,9 +35,11 @@ When upgrading from 2.5.1, Fluor4me copies existing keyboard rules and preferenc
 Grant the new app Accessibility access. If System Settings still lists
 `com.yjcdon.Fluor4me` under Menu Bar, use the **Fluor4me** switch for the new app.
 
-To launch Fluor4me at login, turn on the option in Preferences → General.
+To launch Fluor4me at login, turn on the option in Settings → General.
 If macOS asks for approval, enable it in System Settings under Login
 Items. Manage any older entry there as well.
+
+Choose Settings → About to see the installed version and open the GitHub repository.
 
 After updating a locally signed build, remove and re-add the app in
 Accessibility settings if macOS rejects the previous authorization.

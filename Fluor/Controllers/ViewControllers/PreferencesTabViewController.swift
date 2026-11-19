@@ -40,20 +40,19 @@ final class PreferencesTabViewController: NSTabViewController, TriggerSectionVis
         super.viewDidLoad()
         tabStyle = .toolbar
         canPropagateSelectedChildViewControllerTitle = false
-        addTab(label: NSLocalizedString("General", comment: ""), icon: .settings, content: generalPane())
-        addTab(label: NSLocalizedString("Advanced", comment: ""), icon: .advanced, content: advancedPane())
+        addTab("General", icon: .settings, controller: generalPane())
+        addTab("Advanced", icon: .advanced, controller: advancedPane())
+        addTab("About", icon: .about, controller: AboutViewController())
     }
 
-    private func addTab(label: String, icon: FluorIcon, content: NSView) {
-        let controller = NSViewController()
-        controller.view = content
+    private func addTab(_ title: String, icon: FluorIcon, controller: NSViewController) {
         let item = NSTabViewItem(viewController: controller)
-        item.label = label
+        item.label = NSLocalizedString(title, comment: "Settings tab")
         item.image = icon.image(size: 17)
         addTabViewItem(item)
     }
 
-    private func generalPane() -> NSView {
+    private func generalPane() -> NSViewController {
         let startAtLogin = NSButton(
             checkboxWithTitle: NSLocalizedString("Start Fluor at login", comment: ""), target: nil, action: nil
         )
@@ -75,7 +74,7 @@ final class PreferencesTabViewController: NSTabViewController, TriggerSectionVis
         return pane([startAtLogin, startupRow, resetOnQuit, restoreStartup, quitMode])
     }
 
-    private func advancedPane() -> NSView {
+    private func advancedPane() -> NSViewController {
         let processes = checkbox("Always show all running processes", checked: preferences.showAllRunningProcesses,
                                  action: #selector(changeShowAll(_:)))
         let trigger = checkbox("Hide the trigger method selection section", checked: preferences.hideSwitchMethod,
@@ -116,7 +115,7 @@ final class PreferencesTabViewController: NSTabViewController, TriggerSectionVis
         return button
     }
 
-    private func pane(_ controls: [NSView]) -> NSView {
+    private func pane(_ controls: [NSView]) -> NSViewController {
         let view = NSView()
         let stack = NSStackView(views: controls)
         stack.orientation = .vertical
@@ -130,7 +129,9 @@ final class PreferencesTabViewController: NSTabViewController, TriggerSectionVis
             stack.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20),
             stack.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -20)
         ])
-        return view
+        let controller = NSViewController()
+        controller.view = view
+        return controller
     }
 
     /// Enable the quit mode only when a specific mode will be restored.
