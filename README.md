@@ -1,131 +1,39 @@
 # Fluor4me
 
-Use the menu bar to set each app to standard F1–F12, media keys, or the
-default mode. Fluor4me applies the rule when you switch apps.
+简体中文 · [English](#english)
 
-On the built-in Apple keyboard, press F4 in Google Chrome to search the selected
-text in a new Google tab. The command does nothing when the selection is empty.
-Chrome uses Apple media-key mode, so F1/F2 still adjust brightness and
-F10/F11/F12 still control sound. When you leave Chrome, Fluor removes the F4
-mapping and applies your usual rules for the next app. In Apple media-key mode,
-F4 opens Spotlight outside Chrome. In standard function-key mode, use Fn+F4.
+Fluor4me 是一款 macOS 菜单栏工具，可按应用切换功能键模式，也能在 Google Chrome 中按 F4 搜索网页选中的文字。
 
-## Install
+## 功能
 
-Starting with version 2.6.0, the release ZIP supports Apple Silicon Macs on
-macOS 14 or later.
+- **按应用切换功能键**。在菜单栏给各个应用选择标准 F1–F12、亮度和音量等媒体键，或跟随默认模式。可以随前台应用自动切换，也可以设置为短按 Fn 切换当前应用或全局模式。
+- **在 Chrome 按 F4 搜索**。在网页中选中文字，按受支持的 Mac 内置键盘上的 F4，即可在新标签页打开 Google 搜索。Chrome 中的亮度和音量键仍可照常使用。短按 Fn 和 F4 搜索需要在系统设置中授予 Fluor4me 辅助功能权限。
+- **菜单栏管理**。菜单栏图标显示当前模式，可以打开规则、查看运行中的应用，或暂停和恢复键盘管理。
 
-1. Download the Apple Silicon ZIP from the [latest release](https://github.com/yjcdon/Fluor4me/releases/latest), unzip it, and move Fluor4me to Applications.
-2. Quit any older Fluor instance and launch Fluor4me. Grant it Accessibility access in System Settings, then switch apps.
-3. Select text on a regular Chrome web page and press F4.
+## 2.6.0
 
-The release ZIP uses an ad-hoc signature. Fluor reads the focused Chrome web
-page's selection through macOS Accessibility and skips browser UI and secure
-text fields. Chrome may omit paragraph separators in selections across blocks.
+- 「设置 → 一般」可以启用登录时启动。「设置 → 关于」可以查看版本和打开项目主页。
+- 设置、规则和运行中的应用窗口支持最小化和用 ⌘W 关闭。关闭窗口后仍可从菜单栏使用 Fluor4me。
+- 支持 Apple 芯片 Mac，要求 macOS 14 或更新版本。使用 Python 3 和 macOS Command Line Tools 运行 `./scripts/build-app.py`，生成 `dist/Fluor4me.app`。
 
-Fluor removes its mapping when disabled or normally quit. If Fluor was
-force-quit with Chrome in front, relaunch Fluor to clear the leftover mapping.
+Fluor4me 基于 Pierre Tacchi 的 [Fluor](https://github.com/Pyroh/Fluor)，功能键切换参考了 [fntoggle](https://github.com/nelsonjchen/fntoggle)。[MIT 许可证](LICENSE)
 
-Command-drag the Fluor4me icon out of the menu bar to hide it. F4 search stays
-active while the icon is hidden. On macOS 27, turn Fluor4me back on in
-System Settings → Menu Bar → Allow in the Menu Bar to bring the icon back
-while Fluor4me is running.
+## English
 
-When upgrading from 2.5.1, Fluor4me copies existing keyboard rules and preferences.
-Grant the new app Accessibility access. If System Settings still lists
-`com.yjcdon.Fluor4me` under Menu Bar, use the **Fluor4me** switch for the new app.
+[简体中文](#fluor4me)
 
-To launch Fluor4me at login, turn on the option in Settings → General.
-If macOS asks for approval, enable it in System Settings under Login
-Items. Manage any older entry there as well.
+Fluor4me is a macOS menu bar utility that switches function-key modes per app and uses F4 to search selected text in Google Chrome.
 
-Choose Settings → About to see the installed version and open the GitHub repository.
+### Features
 
-After updating a locally signed build, remove and re-add the app in
-Accessibility settings if macOS rejects the previous authorization.
+- **Per-app function keys.** Use the menu bar to assign standard F1–F12, media keys such as brightness and volume, or the default mode to each app. Switch automatically with the active app, or configure a quick Fn tap to change the current app or global mode.
+- **F4 search in Chrome.** Select text on a web page and press F4 on a supported built-in Mac keyboard to open a Google search in a new tab. Brightness and volume keys stay available in Chrome. Fn tap and F4 search require Accessibility permission for Fluor4me in System Settings.
+- **Menu bar controls.** The icon shows the active mode. Open rules, view running apps, or pause and resume keyboard management from the menu.
 
-## Build from source
+### 2.6.0
 
-On an Apple Silicon Mac with macOS Command Line Tools installed, run:
+- Use Settings → General to enable launch at login. Settings → About shows the version and links to the project.
+- Minimize the Settings, Rules, and Running Applications windows or close them with ⌘W. Fluor4me stays available in the menu bar.
+- Requires an Apple silicon Mac with macOS 14 or later. Run `./scripts/build-app.py` with Python 3 and macOS Command Line Tools to build `dist/Fluor4me.app`.
 
-```sh
-./scripts/build-app.py
-```
-
-The script builds a signed app at `dist/Fluor4me.app`. It uses the local
-Apple Development identity when exactly one is available, so macOS can recognize
-the app across rebuilds. Otherwise it signs ad hoc. Use `--sign -` to build
-the ad-hoc release. It downloads
-the pinned DefaultsWrapper source. Set `HTTPS_PROXY` to use a proxy. Use
-`--debug` for a Debug build, `--output /path/to/Fluor4me.app` for a different
-location, or `--sign` with a local signing identity. Choose an empty output
-location for each build.
-
-# Upstream Fluor documentation
-
-[![Swift](https://img.shields.io/badge/Swift-4.0-orange.svg?style=flat)](https://developer.apple.com/swift/)
-![version](https://img.shields.io/badge/macOS-10.11+-green.svg?style=flat)
-[![License](https://img.shields.io/badge/license-MIT-71787A.svg)](https://tldrlegal.com/license/mit-license)
-
-
-![](https://github.com/Pyroh/Fluor/blob/master/ressources/banner.png?raw=true)
-
-> Want to know how **Fluor** development is going ? [**Follow me on Twitter**](https://twitter.com/__pyroh).
-
-# What is Fluor ?
-**Fluor** is a tool that allows you to automatically change the behavior of the keyboard's fn keys depending on the active application. It's that simple.
-
-# Instaling Fluor
-There's two main ways to install **Fluor**:
-
-1. Download the [latest release](https://github.com/Pyroh/Fluor/releases), open the DMG and drag the application to your `/Applications` folder.
-2. Install via [Homebrew Cask](https://caskroom.github.io):  
-`$ brew cask install fluor`
-
-You can also build it from source, but this is not recommended if your are only going to use **Fluor** in the regular way, and not hack it. 
-
-# How does it work?
-<img src="https://github.com/Pyroh/Fluor/blob/master/ressources/statusbar.png?raw=true" width=327pt>
-
-**Fluor** lies in your status bar and makes you see instantaneously which mode your keyboard is on:
-
-- <img src="https://github.com/Pyroh/Fluor/blob/master/Fluor/Assets.xcassets/iconAppleModeTemplate.imageset/iconAppleModeTemplate@2x.png?raw=true" width=16pt> means that the keyboard's fn keys act like the default Apple function keys.
-- <img src="https://github.com/Pyroh/Fluor/blob/master/Fluor/Assets.xcassets/iconOtherModeTemplate.imageset/iconOtherModeTemplate@2x.png?raw=true" width=16pt> means that the keyboard's fn keys act like these good old function keys (F1, F2, F3, you got it...).
-
-## Fluor's menu
-This is what you get when you click on **Fluor** in the status bar:
-
-<img src="https://github.com/Pyroh/Fluor/blob/master/ressources/mainmenu.png?raw=true" width=279pt>
-
-You can choose the default mode. Whenever **Fluor** runs it will activate the default mode for your keyboard's fn keys.
-
-**Fluor** also displays the active application and its associated rule that you can change on the go.  
-<img src="https://github.com/Pyroh/Fluor/blob/master/Fluor/Assets.xcassets/defaultModeTemplate.imageset/defaultModeTemplate@2x.png?raw=true" width=16pt> is the default rule and means that the application will adopt default Fluor's keyboard behaviour.
-
-You can also disable **Fluor** if you need to. It will set the keyboard's behaviour as it was prior to the application's launch. 
-
-## Rules Editor
-<img src="https://github.com/Pyroh/Fluor/blob/master/ressources/ruleseditor.png?raw=true" width=412pt>
-
-This panel allows you to see all the rules you set at once. You can modify or delete any rule. Adding a rule will prompt a file selector in which you'll be able to select the application you want to set a rule for.
-
-## Running Applications
-<img src="https://github.com/Pyroh/Fluor/blob/master/ressources/runningapps.png?raw=true" width=412pt>
-
-Sometimes it is not possible to select an application in the *Rules Editor*, especially for Steam games. This panel lets you set a rule for any running application. Of course the rules you set in this panel will be available directly in the *Rules Editor*. You can also remove a rule by setting the application behaviour to <img src="https://github.com/Pyroh/Fluor/blob/master/Fluor/Assets.xcassets/defaultModeTemplate.imageset/defaultModeTemplate@2x.png?raw=true" width=16pt>, it will also disappear from the *Rules Editor* panel.
-
-# Why is it open source ?
-I made **Fluor** because I needed such an application. I wanted it simple, nicely designed and free and I didn't find such a thing on the internet. Once it was done I used it for a little while, cleaned up the code and decided to give it to others for free. What was a requirement for me can well be a requirement for others too.  
-You'd argue that such a non-sandboxed app had no chance to hit the AppStore and you'd be right. But if I had the chance it would have remained free and open-source. I don't think there's many people needing such an app and I prefer seeing it used by a wider range of people.  
-
-This app is also built using open-source code, that's why I think it belongs to this world. And if someone learns something looking at the code I'll be happy 😃.
-
-# Contributing
-All contributions are welcome. Fork it, hack it and make a pull request.
-
-# License
-**Fluor** is released under the MIT license. See LICENSE for details.
-
-Some of [**fntoggle**](https://github.com/nelsonjchen/fntoggle)'s code was used. As its author [wrote](https://github.com/nelsonjchen/fntoggle#license) it could be released under the GPL2 license.
-
-Upstream Fluor used [**LaunchAtLoginController**](https://github.com/Mozketo/LaunchAtLoginController), Copyright (c) 2010 Ben Clark-Robinson, released under the MIT license.
+Fluor4me is based on Pierre Tacchi’s [Fluor](https://github.com/Pyroh/Fluor) and draws on [fntoggle](https://github.com/nelsonjchen/fntoggle) for function-key switching. [MIT License](LICENSE)
