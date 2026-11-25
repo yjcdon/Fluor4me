@@ -12,7 +12,11 @@ Fluor4me 是一款 macOS 菜单栏工具，可按应用切换功能键模式，�
 
 ## 安装
 
-下载 [Fluor4me 2.6.1](https://github.com/yjcdon/Fluor4me/releases/tag/v2.6.1) 的 arm64 ZIP。退出旧版，解压后将应用放到个人「应用程序」目录 `~/Applications`。发行包适用于搭载 Apple 芯片并运行 macOS 14 或更新版本的 Mac，采用 ad hoc 临时签名。需要从源码构建时，使用 Python 3 和 macOS Command Line Tools 运行 `./scripts/build-app.py`。
+下载 [Fluor4me 2.6.2](https://github.com/yjcdon/Fluor4me/releases/tag/v2.6.2) 的 arm64 ZIP。退出旧版，解压后将应用放到个人「应用程序」目录 `~/Applications`。发行包适用于搭载 Apple 芯片并运行 macOS 14 或更新版本的 Mac，采用 ad hoc 临时签名。需要从源码构建时，使用 Python 3 和 macOS Command Line Tools 运行 `./scripts/build-app.py`。
+
+## 2.6.2
+
+F4 直接将请求交给运行中的 Chrome，省去启动转发进程的等待。一次只处理一个请求，Chrome 忙时的连按会被忽略。
 
 ## 2.6.1
 
@@ -41,7 +45,11 @@ Fluor4me is a macOS menu bar utility that switches function-key modes per app an
 
 ### Installation
 
-Download the arm64 ZIP from [Fluor4me 2.6.1](https://github.com/yjcdon/Fluor4me/releases/tag/v2.6.1). Quit your current copy, unzip the download, and move the app to your personal Applications folder, `~/Applications`. The ad hoc signed release requires an Apple silicon Mac running macOS 14 or later. To build from source, run `./scripts/build-app.py` with Python 3 and macOS Command Line Tools.
+Download the arm64 ZIP from [Fluor4me 2.6.2](https://github.com/yjcdon/Fluor4me/releases/tag/v2.6.2). Quit your current copy, unzip the download, and move the app to your personal Applications folder, `~/Applications`. The ad hoc signed release requires an Apple silicon Mac running macOS 14 or later. To build from source, run `./scripts/build-app.py` with Python 3 and macOS Command Line Tools.
+
+### 2.6.2
+
+F4 sends requests directly to the running Chrome instance. Fluor4me handles one request at a time and discards additional presses while Chrome is busy.
 
 ### 2.6.1
 
