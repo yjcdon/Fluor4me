@@ -10,6 +10,7 @@ final class ChromeF4Shortcut {
     private typealias KeyMapping = [String: UInt64]
     private static let mappingKey = "UserKeyMapping" as CFString
     private static let selectionQueue = DispatchQueue(label: "com.yjcdon.Fluor4me.selection")
+    private static let selectionSlot = DispatchSemaphore(value: 1)
     private static let recoveryKey = "ChromeF4MappingNeedsCleanup"
     private static let sourceKey = "HIDKeyboardModifierMappingSrc"
     private static let mapping: KeyMapping = [
@@ -106,31 +107,45 @@ final class ChromeF4Shortcut {
             return Unmanaged.passUnretained(event)
         }
         if type == .keyDown && event.getIntegerValueField(.keyboardEventAutorepeat) == 0 {
-            // AX requests can wait for Chrome. Keep them out of the event-tap callback.
-            Self.selectionQueue.async { Self.openSelection(in: chrome) }
+            Self.enqueueSelection { deadline in Self.openSelection(in: chrome, before: deadline) }
         }
         return nil
     }
 
-    /// Opens the result in the source browsing mode, using direct requests when Chrome can route them.
-    private static func openSelection(in chrome: NSRunningApplication) {
-        let app = AXUIElementCreateApplication(chrome.processIdentifier)
-        AXUIElementSetMessagingTimeout(app, 0.15)
-        guard chrome.isActive, let window = element(attribute(kAXFocusedWindowAttribute, of: app)),
-              let selection = readSelection(in: app) else { return }
-
-        let switches = directOpenSwitches(for: window, page: selection.area, app: app, chrome: chrome)
-        guard chrome.isActive, element(attribute(kAXFocusedWindowAttribute, of: app)) == window else { return }
-        if let switches, let executable = chrome.executableURL {
-            openDirectly(selection.text, with: executable, switches: switches)
-        } else {
-            submitInWindow(selection.text, window: window, app: app, chrome: chrome)
+    /// Accepts one F4 request at a time. Busy presses are discarded at the event tap.
+    private static func enqueueSelection(_ perform: @escaping (DispatchTime) -> Void) {
+        guard selectionSlot.wait(timeout: .now()) == .success else { return }
+        let deadline = DispatchTime.now() + .seconds(1)
+        selectionQueue.async {
+            defer { selectionSlot.signal() }
+            perform(deadline)
         }
     }
 
-    /// Uses explicit Incognito routing only when Chrome's singleton and profile identify the source session.
+    /// Opens a fresh selection in the source browsing mode.
+    private static func openSelection(in chrome: NSRunningApplication, before deadline: DispatchTime) {
+        let app = AXUIElementCreateApplication(chrome.processIdentifier)
+        AXUIElementSetMessagingTimeout(app, 0.15)
+        guard DispatchTime.now() < deadline, chrome.isActive,
+              let window = element(attribute(kAXFocusedWindowAttribute, of: app)),
+              let selection = readSelection(in: app), DispatchTime.now() < deadline else { return }
+
+        let switches = directOpenSwitches(for: window, page: selection.area, app: app, before: deadline)
+        guard chrome.isActive, element(attribute(kAXFocusedWindowAttribute, of: app)) == window,
+              DispatchTime.now() < deadline else { return }
+        if let switches {
+            // Chrome accepts "? <terms>" as a search using the selected profile's engine.
+            let argument = webAddress(in: selection.text)?.absoluteString ?? "? " + selection.text
+            if ChromeOpenRequest.send(argument, switches: switches, to: chrome, before: deadline) {
+                return
+            }
+        }
+        submitInWindow(selection.text, window: window, app: app, chrome: chrome, before: deadline)
+    }
+
+    /// Opens directly when the running Chrome instance can receive the request in the source mode.
     private static func directOpenSwitches(for window: AXUIElement, page: AXUIElement,
-                                           app: AXUIElement, chrome: NSRunningApplication) -> [String]? {
+                                           app: AXUIElement, before deadline: DispatchTime) -> [String]? {
         guard let pageTitle = attribute(kAXTitleAttribute, of: page) as? String, !pageTitle.isEmpty,
               let title = attribute(kAXTitleAttribute, of: window) as? String else { return nil }
         let regularTitle = pageTitle + " - Google Chrome"
@@ -138,28 +153,24 @@ final class ChromeF4Shortcut {
 
         let incognitoLabels = [" (Incognito)", "（无痕）", "（無痕）"]
         guard incognitoLabels.contains(where: { title == regularTitle + $0 }),
-              canRouteIncognito(in: app) else { return nil }
-
-        let files = FileManager.default
-        let dataDirectory = files.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Application Support/Google/Chrome", isDirectory: true)
-        let lock = dataDirectory.appendingPathComponent("SingletonLock")
-        guard let lockTarget = try? files.destinationOfSymbolicLink(atPath: lock.path),
-              Int32(lockTarget.split(separator: "-").last ?? "") == chrome.processIdentifier else { return nil }
+              canRouteIncognito(in: app, before: deadline) else { return nil }
 
         // Chrome reuses the most recently active Incognito window in its current profile.
-        return ["--user-data-dir=" + dataDirectory.path, "--incognito"]
+        return ["--incognito"]
     }
 
     /// Checks the current profile and Incognito availability from Chrome's own menus.
-    private static func canRouteIncognito(in app: AXUIElement) -> Bool {
-        guard let menuBar = element(attribute(kAXMenuBarAttribute, of: app)) else { return false }
+    private static func canRouteIncognito(in app: AXUIElement, before deadline: DispatchTime) -> Bool {
+        guard DispatchTime.now() < deadline,
+              let menuBar = element(attribute(kAXMenuBarAttribute, of: app)) else { return false }
         func children(of item: AXUIElement) -> [AXUIElement] {
-            attribute(kAXChildrenAttribute, of: item) as? [AXUIElement] ?? []
+            guard DispatchTime.now() < deadline else { return [] }
+            return attribute(kAXChildrenAttribute, of: item) as? [AXUIElement] ?? []
         }
         let items = children(of: menuBar).flatMap(children).flatMap(children)
         let profiles = items.filter {
-            attribute(kAXIdentifierAttribute, of: $0) as? String == "switchToProfileFromMenu:"
+            DispatchTime.now() < deadline &&
+                attribute(kAXIdentifierAttribute, of: $0) as? String == "switchToProfileFromMenu:"
         }
         guard profiles.count == 1, let profile = profiles.first,
               let mark = attribute(kAXMenuItemMarkCharAttribute, of: profile) as? String,
@@ -168,33 +179,18 @@ final class ChromeF4Shortcut {
         // In AX menu modifiers, Command is implicit and the low bit represents Shift.
         let commandShift = 1
         return items.contains { item in
-            (attribute(kAXMenuItemCmdCharAttribute, of: item) as? String)?.lowercased() == "n" &&
+            DispatchTime.now() < deadline &&
+                (attribute(kAXMenuItemCmdCharAttribute, of: item) as? String)?.lowercased() == "n" &&
                 attribute(kAXMenuItemCmdModifiersAttribute, of: item) as? Int == commandShift &&
                 attribute(kAXEnabledAttribute, of: item) as? Bool == true
         }
     }
 
-    /// Sends one URL or search argument to the running Chrome session without focusing its address bar.
-    private static func openDirectly(_ text: String, with executable: URL, switches: [String]) {
-        let request = Process()
-        request.executableURL = executable
-        // Chrome accepts "? <terms>" as an explicit search.
-        request.arguments = switches + ["--", webAddress(in: text)?.absoluteString ?? "? " + text]
-        request.standardOutput = FileHandle.nullDevice
-        request.standardError = FileHandle.nullDevice
-        do {
-            try request.run()
-        } catch {
-            os_log("Could not send the F4 selection to Chrome: %{public}@", type: .error, error.localizedDescription)
-        }
-    }
-
     /// Uses the source window's own address bar so Chrome keeps its mode and search settings.
     private static func submitInWindow(_ text: String, window: AXUIElement, app: AXUIElement,
-                                       chrome: NSRunningApplication) {
-        guard postKey(kVK_ANSI_L, flags: .maskCommand, to: chrome) else { return }
-        let deadline = ProcessInfo.processInfo.systemUptime + 1
-        while chrome.isActive && ProcessInfo.processInfo.systemUptime < deadline {
+                                       chrome: NSRunningApplication, before deadline: DispatchTime) {
+        guard DispatchTime.now() < deadline, postKey(kVK_ANSI_L, flags: .maskCommand, to: chrome) else { return }
+        while chrome.isActive && DispatchTime.now() < deadline {
             guard element(attribute(kAXFocusedWindowAttribute, of: app)) == window else { return }
             if let field = element(attribute(kAXFocusedUIElementAttribute, of: app)),
                let classes = attribute("AXDOMClassList", of: field) as? [String],
@@ -203,8 +199,10 @@ final class ChromeF4Shortcut {
                 let schemeText = text.components(separatedBy: .controlCharacters).joined().lowercased()
                 let input = schemeText.hasPrefix("javascript:") ? "? " + text :
                     webAddress(in: text)?.absoluteString ?? text
-                guard AXUIElementSetAttributeValue(field, kAXValueAttribute as CFString, input as CFString) == .success,
-                      element(attribute(kAXFocusedUIElementAttribute, of: app)) == field else { return }
+                guard DispatchTime.now() < deadline,
+                      AXUIElementSetAttributeValue(field, kAXValueAttribute as CFString, input as CFString) == .success,
+                      element(attribute(kAXFocusedUIElementAttribute, of: app)) == field,
+                      DispatchTime.now() < deadline else { return }
                 _ = postKey(kVK_Return, flags: .maskAlternate, to: chrome)
                 return
             }
