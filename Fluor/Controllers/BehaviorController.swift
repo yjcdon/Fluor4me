@@ -40,7 +40,7 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
     private var fnDownTimestamp: TimeInterval? = nil
     private var shouldHandleFNKey: Bool = false
     
-    private let chromeF4Shortcut = ChromeF4Shortcut()
+    private let chromeShortcuts = ChromeShortcuts()
     private var sessionIsActive = true
     private var appliedKeyboardMode: FKeyMode = .media
     private var currentMode: FKeyMode = .media
@@ -51,7 +51,7 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
     private var switchMethod: SwitchMethod = .window
     
     func setupController() {
-        self.chromeF4Shortcut.recoverIfNeeded()
+        self.chromeShortcuts.recoverIfNeeded()
         self.onLaunchKeyboardMode = AppManager.default.getCurrentFKeyMode()
         self.currentMode = self.onLaunchKeyboardMode
         self.appliedKeyboardMode = self.onLaunchKeyboardMode
@@ -81,7 +81,7 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
         } else {
             self.shouldHandleFNKey = false
             self.fnDownTimestamp = nil
-            self.chromeF4Shortcut.deactivate()
+            self.chromeShortcuts.deactivate()
             do {
                 try FKeyManager.setCurrentFKeyMode(self.onLaunchKeyboardMode)
                 self.appliedKeyboardMode = self.onLaunchKeyboardMode
@@ -92,7 +92,7 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
     }
     
     func performTerminationCleaning() {
-        self.chromeF4Shortcut.deactivate()
+        self.chromeShortcuts.deactivate()
         if AppManager.default.shouldRestoreStateOnQuit {
             let state: FKeyMode
             if AppManager.default.shouldRestorePreviousState {
@@ -182,7 +182,7 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
     @objc private func appMustSleep(notification: Notification) {
         guard self.sessionIsActive else { return }
         self.sessionIsActive = false
-        self.chromeF4Shortcut.deactivate()
+        self.chromeShortcuts.deactivate()
         do {
             try FKeyManager.setCurrentFKeyMode(self.onLaunchKeyboardMode)
             self.appliedKeyboardMode = self.onLaunchKeyboardMode
@@ -234,11 +234,11 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
         self.changeKeyboard(mode: self.currentMode)
     }
 
-    /// Use Apple media keys in Chrome while its single-key Spotlight mapping is active.
+    /// Use Apple media keys in Chrome while its F4 and F5 shortcuts are active.
     private func changeKeyboard(mode requestedMode: FKeyMode) {
         guard self.sessionIsActive, !AppManager.default.isDisabled else { return }
-        let isChrome = NSWorkspace.shared.frontmostApplication?.bundleIdentifier == ChromeF4Shortcut.chromeID
-        if !isChrome { self.chromeF4Shortcut.deactivate() }
+        let isChrome = NSWorkspace.shared.frontmostApplication?.bundleIdentifier == ChromeShortcuts.chromeID
+        if !isChrome { self.chromeShortcuts.deactivate() }
         let mode: FKeyMode = isChrome ? .media : requestedMode
         if mode != self.appliedKeyboardMode {
             do { try FKeyManager.setCurrentFKeyMode(mode) }
@@ -246,7 +246,7 @@ class BehaviorController: NSObject, BehaviorDidChangeObserver, DefaultModeViewCo
             self.appliedKeyboardMode = mode
         }
         self.showKeyboardMode(self.appliedKeyboardMode)
-        if isChrome { self.chromeF4Shortcut.activate() }
+        if isChrome { self.chromeShortcuts.activate() }
     }
 
     /// Show the keyboard mode already applied by macOS.
